@@ -1,0 +1,217 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: users
+    // Document ID: {uid}
+    // Fields:
+    //   - uid: string (required, immutable) - Unique user ID from Firebase Auth.
+    //   ...
+    //
+    //   Sub-collection: history
+    //   Document ID: {matchId}
+    //   Fields:
+    //     - opponentName: string (required) - Name of the opponent.
+    //     - result: string (required, enum) - Result of the match for the user.
+    //     - playerScore: number (required) - User's final score.
+    //     - opponentScore: number (required) - Opponent's final score.
+    //     - mode: string (required, enum) - Game mode.
+    //     - timestamp: timestamp (required) - When the match was recorded.
+    //
+    // Collection: matches
+    // Document ID: {matchId}
+    // Fields:
+    //   - id: string (required, immutable) - Unique match ID.
+    //   - players: list (required) - List of player UIDs in the match.
+    //   - moves: map (optional) - Map of player UID to their selected move.
+    //   - scores: map (optional) - Map of player UID to their current score.
+    //   - status: string (required, enum) - Current status of the match.
+    //   - winner: string (optional) - UID of the winner, or null for a draw.
+    //   - round: number (required) - Current round number.
+    //   - mode: string (required, enum) - Game mode.
+    //   - createdAt: timestamp (required, immutable) - Timestamp when the match was created.
+    //   - updatedAt: timestamp (required) - Timestamp when the match was last updated.
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+          ((request.auth.token.email == "ahadmuhammad053@gmail.com" || request.auth.token.email == "ahadxd053@gmail.com") && request.auth.token.email_verified == true));
+    }
+
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    function isValidEmail(email) {
+      return email is string && email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    function isValidUrl(url) {
+      return url is string && (url.matches("^https://.*") || url.matches("^http://.*"));
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+
+    function isValidUser(data) {
+      return hasRequiredFields(['uid', 'displayName', 'username', 'usernameLower', 'elo', 'rank', 'wins', 'losses', 'draws', 'streak', 'matchesPlayed', 'createdAt']) &&
+             data.uid is string && data.uid.size() > 0 && data.uid.size() < 128 &&
+             data.displayName is string && data.displayName.size() > 0 && data.displayName.size() < 50 &&
+             data.username is string && data.username.size() >= 3 && data.username.size() < 30 &&
+             data.usernameLower is string && data.usernameLower == data.username.lower() &&
+             data.elo is number && data.elo >= 0 &&
+             data.rank in ['Plastic', 'Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Master', 'Grandmaster', 'Champion'] &&
+             data.wins is number && data.wins >= 0 &&
+             data.losses is number && data.losses >= 0 &&
+             data.draws is number && data.draws >= 0 &&
+             data.streak is number && data.streak >= 0 &&
+             data.matchesPlayed is number && data.matchesPlayed >= 0 &&
+             data.createdAt is timestamp &&
+             (!('status' in data) || data.status in ['online', 'offline', 'in-game']) &&
+             (!('botWins' in data) || data.botWins is number) &&
+             (!('botLosses' in data) || data.botLosses is number) &&
+             (!('botDraws' in data) || data.botDraws is number) &&
+             (!('email' in data) || (isValidEmail(data.email) && data.email.size() < 256)) &&
+             (!('photoURL' in data) || (isValidUrl(data.photoURL) && data.photoURL.size() < 1024)) &&
+             (!('favoriteMove' in data) || data.favoriteMove in ['rock', 'paper', 'scissors', null]);
+    }
+
+    function isValidGameInvite(data) {
+      return hasRequiredFields(['fromUid', 'fromDisplayName', 'fromUsername', 'toUid', 'status', 'timestamp']) &&
+             data.fromUid is string && data.fromUid.size() > 0 &&
+             data.fromDisplayName is string && data.fromDisplayName.size() > 0 &&
+             data.fromUsername is string && data.fromUsername.size() > 0 &&
+             data.toUid is string && data.toUid.size() > 0 &&
+             data.status in ['pending', 'accepted', 'rejected', 'expired'] &&
+             data.timestamp is timestamp;
+    }
+
+    function isValidMatchmaking(data) {
+      return hasRequiredFields(['uid', 'elo', 'createdAt', 'status']) &&
+             data.uid is string && data.elo is number &&
+             data.status in ['searching', 'matched'] &&
+             (!('matchId' in data) || (data.matchId is string && data.matchId.size() > 0));
+    }
+
+    function isValidFriendRequest(data) {
+      return hasRequiredFields(['fromUid', 'fromDisplayName', 'fromUsername', 'toUid', 'status', 'timestamp']) &&
+             data.fromUid is string && data.fromUid.size() > 0 &&
+             data.fromDisplayName is string && data.fromDisplayName.size() > 0 &&
+             data.fromUsername is string && data.fromUsername.size() > 0 &&
+             data.toUid is string && data.toUid.size() > 0 &&
+             data.status in ['pending', 'accepted', 'rejected'] &&
+             data.timestamp is timestamp;
+    }
+
+    function isValidHistory(data) {
+      return hasRequiredFields(['opponentName', 'result', 'playerScore', 'opponentScore', 'mode', 'timestamp']) &&
+             data.opponentName is string && data.opponentName.size() > 0 && data.opponentName.size() < 100 &&
+             data.result in ['win', 'loss', 'draw'] &&
+             data.playerScore is number && data.playerScore >= 0 &&
+             data.opponentScore is number && data.opponentScore >= 0 &&
+             data.mode in ['single', 'multi-ranked', 'multi-private'] &&
+             data.timestamp is timestamp;
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /users/{userId} {
+      // Public profiles are readable (for leaderboard and search)
+      // Allow guests to see leaderboard
+      allow read: if true;
+      
+      allow create: if isOwner(userId) && isValidUser(request.resource.data) && 
+                      request.resource.data.elo == 1000 && 
+                      request.resource.data.rank == 'Plastic';
+      
+      allow update: if (isOwner(userId) && isValidUser(request.resource.data) && 
+                      request.resource.data.createdAt == resource.data.createdAt &&
+                      request.resource.data.uid == resource.data.uid) || isAdmin();
+      
+      allow delete: if isAdmin();
+
+      match /friends/{friendId} {
+        allow read: if isOwner(userId);
+        // Allow owner to manage their list, OR allow a user to add themselves to another's list if a request exists
+        // Also allow mutual deletion for unfriending
+        allow create: if isOwner(userId) || (isOwner(friendId) && exists(/databases/$(database)/documents/friendRequests/$(userId + "_" + friendId)));
+        allow update: if isOwner(userId);
+        allow delete: if isOwner(userId) || isOwner(friendId);
+      }
+
+      match /history/{matchId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidHistory(request.resource.data);
+      }
+    }
+
+    match /friendRequests/{requestId} {
+      allow read: if isAuthenticated() && (request.auth.uid == resource.data.toUid || request.auth.uid == resource.data.fromUid);
+      allow create: if isAuthenticated() && request.auth.uid == request.resource.data.fromUid && 
+                      isValidFriendRequest(request.resource.data) &&
+                      request.resource.data.status == 'pending';
+      allow delete: if isAuthenticated() && (request.auth.uid == resource.data.toUid || request.auth.uid == resource.data.fromUid);
+    }
+
+    match /gameInvites/{inviteId} {
+      allow read: if isAuthenticated() && (request.auth.uid == resource.data.toUid || request.auth.uid == resource.data.fromUid);
+      allow create: if isAuthenticated() && request.auth.uid == request.resource.data.fromUid && 
+                      isValidGameInvite(request.resource.data) &&
+                      request.resource.data.status == 'pending';
+      allow update: if isAuthenticated() && (request.auth.uid == resource.data.toUid || request.auth.uid == resource.data.fromUid);
+      allow delete: if isAuthenticated() && (request.auth.uid == resource.data.toUid || request.auth.uid == resource.data.fromUid);
+    }
+
+    match /matchmaking/{uid} {
+      allow read: if isAuthenticated();
+      allow create: if isOwner(uid) && isValidMatchmaking(request.resource.data);
+      allow update: if isAuthenticated() && isValidMatchmaking(request.resource.data);
+      allow delete: if isOwner(uid) || isAdmin();
+    }
+
+    match /matches/{matchId} {
+      allow read: if isAuthenticated() && (request.auth.uid in resource.data.players || isAdmin());
+      
+      allow create: if isAuthenticated() && request.auth.uid in request.resource.data.players;
+      
+      allow update: if isAuthenticated() && 
+                      (
+                        isAdmin() ||
+                        request.auth.uid in resource.data.players || 
+                        (resource.data.status == 'waiting' && resource.data.mode == 'multi-private' && request.auth.uid in request.resource.data.players)
+                      );
+      
+      allow delete: if isAdmin();
+    }
+
+    // Default deny
+    match /{path=**} {
+      allow read, write: if false;
+    }
+  }
+}

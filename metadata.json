@@ -1,0 +1,5 @@
+{
+  "name": "NoLuckRPS",
+  "description": "A competitive Rock-Paper-Scissors game with psychological tracking, 3D visuals, and real-time ranked progression.",
+  "requestFramePermissions": []
+}

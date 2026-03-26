@@ -1,0 +1,80 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Stores player profile, stats, and rank information.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Unique user ID from Firebase Auth." },
+        "displayName": { "type": "string", "description": "Player's display name." },
+        "username": { "type": "string", "description": "Unique searchable username." },
+        "photoURL": { "type": "string", "description": "URL to player's avatar image." },
+        "email": { "type": "string", "description": "Player's email address." },
+        "elo": { "type": "integer", "description": "Player's skill rating (ELO)." },
+        "rank": { "type": "string", "enum": ["Plastic", "Bronze", "Silver", "Gold", "Platinum", "Diamond", "Champion"], "description": "Player's rank tier." },
+        "wins": { "type": "integer", "description": "Total matches won." },
+        "losses": { "type": "integer", "description": "Total matches lost." },
+        "draws": { "type": "integer", "description": "Total matches drawn." },
+        "streak": { "type": "integer", "description": "Current winning streak." },
+        "favoriteMove": { "type": "string", "enum": ["rock", "paper", "scissors", null], "description": "Most frequently used move." },
+        "matchesPlayed": { "type": "integer", "description": "Total number of matches played." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp when the profile was created." }
+      },
+      "required": ["uid", "displayName", "username", "elo", "rank", "wins", "losses", "draws", "streak", "matchesPlayed", "createdAt"]
+    },
+    "Match": {
+      "title": "Match",
+      "description": "Stores data for a single Rock-Paper-Scissors match.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique match ID." },
+        "players": { "type": "array", "items": { "type": "string" }, "description": "List of player UIDs in the match." },
+        "moves": { "type": "object", "description": "Map of player UID to their selected move." },
+        "scores": { "type": "object", "description": "Map of player UID to their current score." },
+        "status": { "type": "string", "enum": ["waiting", "playing", "revealing", "finished"], "description": "Current status of the match." },
+        "winner": { "type": "string", "description": "UID of the winner, or null for a draw." },
+        "round": { "type": "integer", "description": "Current round number." },
+        "mode": { "type": "string", "enum": ["single", "multi-ranked", "multi-private"], "description": "Game mode." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp when the match was created." },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Timestamp when the match was last updated." }
+      },
+      "required": ["id", "players", "status", "round", "mode", "createdAt", "updatedAt"]
+    },
+    "MatchHistory": {
+      "title": "MatchHistory",
+      "description": "Stores a record of a completed match for a user.",
+      "type": "object",
+      "properties": {
+        "opponentName": { "type": "string", "description": "Name of the opponent." },
+        "result": { "type": "string", "enum": ["win", "loss", "draw"], "description": "Result of the match for the user." },
+        "playerScore": { "type": "integer", "description": "User's final score." },
+        "opponentScore": { "type": "integer", "description": "Opponent's final score." },
+        "mode": { "type": "string", "enum": ["single", "multi-ranked", "multi-private"], "description": "Game mode." },
+        "timestamp": { "type": "string", "format": "date-time", "description": "When the match was recorded." }
+      },
+      "required": ["opponentName", "result", "playerScore", "opponentScore", "mode", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/users/{uid}": {
+      "schema": "UserProfile",
+      "description": "Collection of user profiles."
+    },
+    "/users/{uid}/friends/{friendUid}": {
+      "schema": "Friend",
+      "description": "Collection of friends for a user."
+    },
+    "/users/{uid}/history/{matchId}": {
+      "schema": "MatchHistory",
+      "description": "Collection of match history for a user."
+    },
+    "/matches/{matchId}": {
+      "schema": "Match",
+      "description": "Collection of match data."
+    },
+    "/matchmaking/{uid}": {
+      "schema": "MatchmakingRequest",
+      "description": "Collection of active matchmaking requests."
+    }
+  }
+}
