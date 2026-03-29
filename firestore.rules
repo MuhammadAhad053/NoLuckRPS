@@ -52,7 +52,8 @@ service cloud.firestore {
 
     function isAdmin() {
       return isAuthenticated() &&
-        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+        ((exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', 'user') == 'admin') ||
           ((request.auth.token.email == "ahadmuhammad053@gmail.com" || request.auth.token.email == "ahadxd053@gmail.com") && request.auth.token.email_verified == true));
     }
 
@@ -77,7 +78,7 @@ service cloud.firestore {
     // ===============================================================
 
     function isValidUser(data) {
-      return hasRequiredFields(['uid', 'displayName', 'username', 'usernameLower', 'elo', 'rank', 'wins', 'losses', 'draws', 'streak', 'matchesPlayed', 'createdAt']) &&
+      return hasRequiredFields(['uid', 'displayName', 'username', 'usernameLower', 'elo', 'rank', 'wins', 'losses', 'draws', 'streak', 'createdAt']) &&
              data.uid is string && data.uid.size() > 0 && data.uid.size() < 128 &&
              data.displayName is string && data.displayName.size() > 0 && data.displayName.size() < 50 &&
              data.username is string && data.username.size() >= 3 && data.username.size() < 30 &&
@@ -88,15 +89,17 @@ service cloud.firestore {
              data.losses is number && data.losses >= 0 &&
              data.draws is number && data.draws >= 0 &&
              data.streak is number && data.streak >= 0 &&
-             data.matchesPlayed is number && data.matchesPlayed >= 0 &&
              data.createdAt is timestamp &&
+             (!('matchesPlayed' in data) || (data.matchesPlayed is number && data.matchesPlayed >= 0)) &&
              (!('status' in data) || data.status in ['online', 'offline', 'in-game']) &&
              (!('botWins' in data) || data.botWins is number) &&
              (!('botLosses' in data) || data.botLosses is number) &&
              (!('botDraws' in data) || data.botDraws is number) &&
-             (!('email' in data) || (isValidEmail(data.email) && data.email.size() < 256)) &&
-             (!('photoURL' in data) || (isValidUrl(data.photoURL) && data.photoURL.size() < 1024)) &&
-             (!('favoriteMove' in data) || data.favoriteMove in ['rock', 'paper', 'scissors', null]);
+             (!('email' in data) || data.email == '' || (isValidEmail(data.email) && data.email.size() < 256)) &&
+             (!('photoURL' in data) || data.photoURL == '' || (isValidUrl(data.photoURL) && data.photoURL.size() < 1024)) &&
+             (!('favoriteMove' in data) || data.favoriteMove in ['rock', 'paper', 'scissors', null]) &&
+             (!('moveStats' in data) || data.moveStats is map) &&
+             (!('updatedAt' in data) || data.updatedAt is timestamp);
     }
 
     function isValidGameInvite(data) {

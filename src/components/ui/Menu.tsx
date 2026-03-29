@@ -66,8 +66,19 @@ export const Menu: React.FC<MenuProps> = ({
     sendInvite,
     acceptInvite,
     rejectInvite,
+    deleteInvite,
+    acceptedMatch,
+    clearAcceptedMatch,
     loading: socialLoading 
   } = useSocial(profile);
+
+  useEffect(() => {
+    if (acceptedMatch && onJoinMatch) {
+      onJoinMatch(acceptedMatch.matchId);
+      deleteInvite(acceptedMatch.inviteId);
+      clearAcceptedMatch();
+    }
+  }, [acceptedMatch, onJoinMatch, clearAcceptedMatch, deleteInvite]);
   
   const currentRank = RANKS[profile.rank] || RANKS['Plastic'];
   const nextRank = currentRank.nextRank ? RANKS[currentRank.nextRank] : null;
@@ -135,8 +146,13 @@ export const Menu: React.FC<MenuProps> = ({
                 </button>
                 <button 
                   onClick={async () => {
-                    const matchId = await acceptInvite(incomingInvites[0]);
-                    if (matchId && onJoinMatch) onJoinMatch(matchId);
+                    const invite = incomingInvites[0];
+                    const matchId = await acceptInvite(invite);
+                    if (matchId && onJoinMatch) {
+                      onJoinMatch(matchId);
+                      // Delete the invite after joining
+                      deleteInvite(invite.id);
+                    }
                   }}
                   className="p-2 bg-orange-600 hover:bg-orange-500 rounded-sm text-white transition-colors"
                 >
@@ -682,18 +698,18 @@ const FriendItem = ({ friend, onRemove, onInvite }: { friend: any, onRemove: (ui
       </div>
       <div className="flex items-center gap-2">
         <button 
+          onClick={() => onInvite(friend.uid)}
+          className="p-2 text-orange-500 hover:text-orange-400 transition-colors"
+          title="Invite to Custom Match"
+        >
+          <Sword className="w-5 h-5" />
+        </button>
+        <button 
           onClick={() => onRemove(friend.uid)}
           className="p-2 text-zinc-600 hover:text-red-500 transition-colors"
           title="Unfriend"
         >
           <UserMinus className="w-4 h-4" />
-        </button>
-        <button 
-          onClick={() => onInvite(friend.uid)}
-          className="p-2 text-zinc-500 hover:text-orange-500 transition-colors"
-          title="Invite to Custom Match"
-        >
-          <Sword className="w-5 h-5" />
         </button>
       </div>
     </div>

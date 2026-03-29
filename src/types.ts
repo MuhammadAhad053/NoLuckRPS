@@ -23,7 +23,9 @@ export interface UserProfile {
     scissors: number;
   };
   matchesPlayed: number;
-  botWins: number; // Added for bot leaderboard
+  botWins: number;
+  botLosses: number;
+  botDraws: number;
   createdAt: number;
   isGuest?: boolean;
 }

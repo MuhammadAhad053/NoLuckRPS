@@ -63,7 +63,7 @@ export const Login: React.FC<LoginProps> = ({
           >
             <div className="relative w-48 h-48 flex items-center justify-center">
               <img 
-                src="/api/files/1742988818833-noluckrps-logo.png"
+                src="/logo.svg"
                 alt="NoLuckRPS Logo"
                 className="w-full h-full object-contain drop-shadow-[0_0_30px_rgba(249,115,22,0.6)]"
                 referrerPolicy="no-referrer"

@@ -78,15 +78,44 @@ export function useSocial(profile: UserProfile | null) {
     );
     const unsubInvites = onSnapshot(qInvites, (snapshot) => {
       const inviteList: GameInvite[] = [];
+      const now = Date.now();
       snapshot.forEach(d => {
         const data = d.data() as GameInvite;
-        const timestamp = data.timestamp?.toMillis() || Date.now();
+        const timestamp = data.timestamp?.toMillis() || now;
         // 3 minutes expiration
-        if (Date.now() - timestamp < 180000) {
+        if (now - timestamp < 180000) {
           inviteList.push({ id: d.id, ...data } as GameInvite);
         }
       });
       setIncomingInvites(inviteList);
+    }, (error) => {
+      try {
+        handleFirestoreError(error, OperationType.LIST, 'gameInvites');
+      } catch (err) {}
+    });
+
+    // Listen for outgoing game invites to detect when they are accepted
+    // Only listen for invites created in the last 5 minutes to avoid joining old matches
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+    const qOutgoingInvites = query(
+      collection(db, 'gameInvites'),
+      where('fromUid', '==', profile.uid),
+      where('status', '==', 'accepted'),
+      where('timestamp', '>=', fiveMinutesAgo)
+    );
+    const unsubOutgoingInvites = onSnapshot(qOutgoingInvites, (snapshot) => {
+      snapshot.docChanges().forEach((change) => {
+        if (change.type === 'added' || change.type === 'modified') {
+          const data = change.doc.data() as GameInvite;
+          if (data.status === 'accepted' && data.matchId) {
+            // Check if it's very recent (within last 30 seconds) to avoid auto-joining on refresh
+            const timestamp = data.timestamp?.toMillis() || Date.now();
+            if (Date.now() - timestamp < 30000) {
+              setAcceptedMatch({ matchId: data.matchId, inviteId: change.doc.id });
+            }
+          }
+        }
+      });
     }, (error) => {
       try {
         handleFirestoreError(error, OperationType.LIST, 'gameInvites');
@@ -98,8 +127,13 @@ export function useSocial(profile: UserProfile | null) {
       unsubIncoming();
       unsubOutgoing();
       unsubInvites();
+      unsubOutgoingInvites();
     };
   }, [profile]);
+
+  const [acceptedMatch, setAcceptedMatch] = useState<{ matchId: string, inviteId: string } | null>(null);
+
+  const clearAcceptedMatch = () => setAcceptedMatch(null);
 
   const searchUsers = async (username: string) => {
     if (!username || !profile) {
@@ -264,6 +298,14 @@ export function useSocial(profile: UserProfile | null) {
     });
   };
 
+  const deleteInvite = async (inviteId: string) => {
+    try {
+      await deleteDoc(doc(db, 'gameInvites', inviteId));
+    } catch (error) {
+      console.error("Delete Invite Error:", error);
+    }
+  };
+
   return { 
     friends, 
     friendRequests,
@@ -278,6 +320,9 @@ export function useSocial(profile: UserProfile | null) {
     sendInvite,
     acceptInvite,
     rejectInvite,
+    deleteInvite,
+    acceptedMatch,
+    clearAcceptedMatch,
     loading 
   };
 }

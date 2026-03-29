@@ -33,6 +33,19 @@ export function useGame(profile: UserProfile | null) {
   // Refs to prevent double processing
   const lastProcessedMatchId = useRef<string | null>(null);
   const matchmakingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const matchmakingUnsubRef = useRef<(() => void) | null>(null);
+
+  // Cleanup on mount/unmount
+  useEffect(() => {
+    if (profile?.uid) {
+      // Clear any stale matchmaking request on mount
+      deleteDoc(doc(db, 'matchmaking', profile.uid)).catch(() => {});
+    }
+    return () => {
+      if (matchmakingTimeoutRef.current) clearTimeout(matchmakingTimeoutRef.current);
+      if (matchmakingUnsubRef.current) matchmakingUnsubRef.current();
+    };
+  }, [profile?.uid]);
 
   const getBotMove = useCallback(() => {
     if (history.length < 3) {
@@ -88,7 +101,10 @@ export function useGame(profile: UserProfile | null) {
         rank: newRank,
         wins: finalResult === 'win' && mode !== 'single' ? increment(1) : increment(0),
         botWins: finalResult === 'win' && mode === 'single' ? increment(1) : increment(0),
-        losses: finalResult === 'loss' ? increment(1) : increment(0),
+        losses: finalResult === 'loss' && mode !== 'single' ? increment(1) : increment(0),
+        botLosses: finalResult === 'loss' && mode === 'single' ? increment(1) : increment(0),
+        draws: finalResult === 'draw' && mode !== 'single' ? increment(1) : increment(0),
+        botDraws: finalResult === 'draw' && mode === 'single' ? increment(1) : increment(0),
         streak: finalResult === 'win' ? increment(1) : 0,
         matchesPlayed: increment(1),
         moveStats: newMoveStats,
@@ -356,8 +372,12 @@ export function useGame(profile: UserProfile | null) {
       clearTimeout(matchmakingTimeoutRef.current);
       matchmakingTimeoutRef.current = null;
     }
+    if (matchmakingUnsubRef.current) {
+      matchmakingUnsubRef.current();
+      matchmakingUnsubRef.current = null;
+    }
     try {
-      await deleteDoc(doc(db, 'matchmaking', profile.uid));
+      await deleteDoc(doc(db, 'matchmaking', profile.uid)).catch(() => {});
       setMatchmakingStatus('idle');
       setMode(null);
     } catch (error) {
@@ -367,6 +387,17 @@ export function useGame(profile: UserProfile | null) {
 
   const startMatchmaking = async () => {
     if (!profile) return;
+    
+    // Clear any existing matchmaking first
+    if (matchmakingUnsubRef.current) {
+      matchmakingUnsubRef.current();
+      matchmakingUnsubRef.current = null;
+    }
+    if (matchmakingTimeoutRef.current) {
+      clearTimeout(matchmakingTimeoutRef.current);
+      matchmakingTimeoutRef.current = null;
+    }
+
     setMatchmakingStatus('searching');
     playSound(SOUNDS.CLICK);
 
@@ -415,6 +446,8 @@ export function useGame(profile: UserProfile | null) {
 
       if (otherRequest) {
         await createMatchWithPlayer(otherRequest.id);
+        // Delete our matchmaking request if it exists (unlikely here but good practice)
+        await deleteDoc(doc(db, 'matchmaking', profile.uid)).catch(() => {});
       } else {
         // 2. Create our own request
         await setDoc(doc(db, 'matchmaking', profile.uid), {
@@ -425,14 +458,20 @@ export function useGame(profile: UserProfile | null) {
         });
 
         // Listen for match
-        let unsub: () => void;
-        unsub = onSnapshot(doc(db, 'matchmaking', profile.uid), async (docSnap) => {
+        matchmakingUnsubRef.current = onSnapshot(doc(db, 'matchmaking', profile.uid), async (docSnap) => {
           const data = docSnap.data();
           if (data?.status === 'matched') {
             if (matchmakingTimeoutRef.current) {
               clearTimeout(matchmakingTimeoutRef.current);
               matchmakingTimeoutRef.current = null;
             }
+            
+            // Unsubscribe immediately to prevent multiple triggers
+            if (matchmakingUnsubRef.current) {
+              matchmakingUnsubRef.current();
+              matchmakingUnsubRef.current = null;
+            }
+            
             setMatchmakingStatus('found');
             playSound(SOUNDS.MATCH_FOUND);
             
@@ -441,13 +480,15 @@ export function useGame(profile: UserProfile | null) {
               if (matchSnap.exists()) {
                 const matchData = matchSnap.data() as Match;
                 setCurrentMatch(matchData);
-                setMode('multi-ranked');
                 const opponentUid = matchData.players.find(id => id !== profile.uid);
                 if (opponentUid) {
                   const oppSnap = await getDoc(doc(db, 'users', opponentUid));
                   if (oppSnap.exists()) setOpponentProfile(oppSnap.data() as UserProfile);
                 }
               }
+              
+              // Delete the matchmaking document now that we've found a match
+              await deleteDoc(doc(db, 'matchmaking', profile.uid)).catch(() => {});
             } catch (err) {
               handleFirestoreError(err, OperationType.GET, `matches/${data.matchId}`);
             }
@@ -456,7 +497,6 @@ export function useGame(profile: UserProfile | null) {
               setMatchmakingStatus('idle');
               setMode('multi-ranked');
             }, 3000);
-            if (unsub) unsub();
           }
         }, (error) => {
           handleFirestoreError(error, OperationType.GET, `matchmaking/${profile.uid}`);
@@ -482,7 +522,10 @@ export function useGame(profile: UserProfile | null) {
               });
               
               await createMatchWithPlayer(closest.id);
-              if (unsub) unsub();
+              if (matchmakingUnsubRef.current) {
+                matchmakingUnsubRef.current();
+                matchmakingUnsubRef.current = null;
+              }
             }
           }
         }, 6000);
@@ -626,13 +669,20 @@ export function useGame(profile: UserProfile | null) {
       
       // If we're already in the match, just set it
       if (matchData.players.includes(profile.uid)) {
-        setCurrentMatch(matchData);
-        setMode(matchData.mode);
         const opponentUid = matchData.players.find(id => id !== profile.uid);
         if (opponentUid) {
           const oppSnap = await getDoc(doc(db, 'users', opponentUid));
           if (oppSnap.exists()) setOpponentProfile(oppSnap.data() as UserProfile);
         }
+
+        setCurrentMatch(matchData);
+        setMatchmakingStatus('found');
+        playSound(SOUNDS.MATCH_FOUND);
+
+        setTimeout(() => {
+          setMatchmakingStatus('idle');
+          setMode(matchData.mode);
+        }, 3000);
         return;
       }
 
@@ -644,6 +694,12 @@ export function useGame(profile: UserProfile | null) {
         updatedAt: serverTimestamp()
       });
 
+      const opponentUid = matchData.players[0];
+      const oppSnap = await getDoc(doc(db, 'users', opponentUid));
+      if (oppSnap.exists()) {
+        setOpponentProfile(oppSnap.data() as UserProfile);
+      }
+
       setCurrentMatch({
         ...matchData,
         players: [...matchData.players, profile.uid],
@@ -651,13 +707,13 @@ export function useGame(profile: UserProfile | null) {
         status: 'playing'
       });
       
-      const opponentUid = matchData.players[0];
-      const oppSnap = await getDoc(doc(db, 'users', opponentUid));
-      if (oppSnap.exists()) {
-        setOpponentProfile(oppSnap.data() as UserProfile);
-      }
+      setMatchmakingStatus('found');
+      playSound(SOUNDS.MATCH_FOUND);
 
-      setMode(matchData.mode);
+      setTimeout(() => {
+        setMatchmakingStatus('idle');
+        setMode(matchData.mode);
+      }, 3000);
     } catch (error) {
       handleFirestoreError(error, OperationType.WRITE, `matches/${matchId}`);
     }

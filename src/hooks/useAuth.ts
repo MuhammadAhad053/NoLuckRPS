@@ -57,6 +57,8 @@ export function useAuth() {
               moveStats: { rock: 0, paper: 0, scissors: 0 },
               matchesPlayed: 0,
               botWins: 0,
+              botLosses: 0,
+              botDraws: 0,
               createdAt: serverTimestamp(),
             };
             await setDoc(profileRef, newProfile);
@@ -141,6 +143,8 @@ export function useAuth() {
       moveStats: { rock: 0, paper: 0, scissors: 0 },
       matchesPlayed: 0,
       botWins: 0,
+      botLosses: 0,
+      botDraws: 0,
       createdAt: Date.now(),
       isGuest: true,
     });
