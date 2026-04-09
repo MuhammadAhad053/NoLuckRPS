@@ -42,51 +42,51 @@ export const GameOverlay: React.FC<GameOverlayProps> = ({
     <div className="absolute inset-0 z-20 flex flex-col pointer-events-none font-orbitron">
       
       {/* Top Bar: Opponent Info & Score */}
-      <div className="p-8 flex justify-between items-start">
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-4 bg-black/60 backdrop-blur-xl border border-white/10 p-4 rounded-2xl shadow-[0_0_20px_rgba(0,0,0,0.5)]">
+      <div className="p-4 md:p-8 flex flex-col md:flex-row justify-between items-center md:items-start gap-4 md:gap-8">
+        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6 w-full md:w-auto">
+          <div className="flex items-center gap-3 md:gap-4 bg-black/60 backdrop-blur-xl border border-white/10 p-3 md:p-4 rounded-xl md:rounded-2xl shadow-[0_0_20px_rgba(0,0,0,0.5)] w-full md:w-auto">
             <div className="relative">
               <img 
                 src={opponent?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${opponent?.username || 'bot'}`} 
                 alt="Opponent" 
-                className="w-12 h-12 rounded-xl border border-red-500/20 bg-zinc-800"
+                className="w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl border border-red-500/20 bg-zinc-800"
                 referrerPolicy="no-referrer"
               />
-              <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-zinc-900 animate-pulse" />
+              <div className="absolute -bottom-1 -right-1 w-2.5 h-2.5 md:w-3 md:h-3 bg-red-500 rounded-full border-2 border-zinc-900 animate-pulse" />
             </div>
             <div>
-              <p className="text-zinc-500 text-[8px] font-black uppercase tracking-[0.2em]">Opponent</p>
-              <h3 className="text-white font-black uppercase tracking-tight text-sm">{opponent?.displayName || 'CyberBot v1.0'}</h3>
-              <p className="text-red-500 text-[8px] font-black uppercase tracking-widest">ELO: {opponent?.elo || '???'}</p>
+              <p className="text-zinc-500 text-[6px] md:text-[8px] font-black uppercase tracking-[0.2em]">Opponent</p>
+              <h3 className="text-white font-black uppercase tracking-tight text-xs md:text-sm truncate max-w-[100px] md:max-w-none">{opponent?.displayName || 'CyberBot v1.0'}</h3>
+              <p className="text-red-500 text-[6px] md:text-[8px] font-black uppercase tracking-widest">ELO: {opponent?.elo || '???'}</p>
             </div>
           </div>
 
           {/* Match Score */}
-          <div className="flex items-center gap-6 bg-black/60 backdrop-blur-xl border border-white/10 px-8 py-4 rounded-2xl shadow-[0_0_20px_rgba(0,0,0,0.5)]">
+          <div className="flex items-center justify-center gap-4 md:gap-6 bg-black/60 backdrop-blur-xl border border-white/10 px-6 md:px-8 py-3 md:py-4 rounded-xl md:rounded-2xl shadow-[0_0_20px_rgba(0,0,0,0.5)] w-full md:w-auto">
             <div className="text-center">
-              <p className="text-zinc-500 text-[8px] font-black uppercase tracking-widest mb-1">Round</p>
-              <p className="text-2xl font-black text-white italic">{round}</p>
+              <p className="text-zinc-500 text-[6px] md:text-[8px] font-black uppercase tracking-widest mb-0.5 md:mb-1">Round</p>
+              <p className="text-xl md:text-2xl font-black text-white italic leading-none">{round}</p>
             </div>
-            <div className="w-px h-8 bg-white/10" />
-            <div className="flex items-center gap-6">
+            <div className="w-px h-6 md:h-8 bg-white/10" />
+            <div className="flex items-center gap-4 md:gap-6">
               <div className="text-center">
-                <p className="text-red-500 text-[8px] font-black uppercase tracking-widest mb-1">You</p>
-                <p className="text-3xl font-black text-white">{playerScore}</p>
+                <p className="text-red-500 text-[6px] md:text-[8px] font-black uppercase tracking-widest mb-0.5 md:mb-1">You</p>
+                <p className="text-2xl md:text-3xl font-black text-white leading-none">{playerScore}</p>
               </div>
-              <p className="text-zinc-600 font-black italic text-xl">VS</p>
+              <p className="text-zinc-600 font-black italic text-lg md:text-xl">VS</p>
               <div className="text-center">
-                <p className="text-red-500 text-[8px] font-black uppercase tracking-widest mb-1">Opp</p>
-                <p className="text-3xl font-black text-white">{opponentScore}</p>
+                <p className="text-red-500 text-[6px] md:text-[8px] font-black uppercase tracking-widest mb-0.5 md:mb-1">Opp</p>
+                <p className="text-2xl md:text-3xl font-black text-white leading-none">{opponentScore}</p>
               </div>
             </div>
           </div>
 
           {/* Turn Timer */}
           {turnTimer !== null && (
-            <div className="bg-red-500/10 backdrop-blur-xl border border-red-500/30 px-6 py-4 rounded-2xl flex flex-col items-center justify-center min-w-[100px] shadow-[0_0_20px_rgba(239,68,68,0.1)]">
-              <p className="text-red-500 text-[8px] font-black uppercase tracking-widest mb-1">Time Left</p>
+            <div className="bg-red-500/10 backdrop-blur-xl border border-red-500/30 px-4 md:px-6 py-3 md:py-4 rounded-xl md:rounded-2xl flex flex-col items-center justify-center min-w-[80px] md:min-w-[100px] shadow-[0_0_20px_rgba(239,68,68,0.1)] w-full md:w-auto">
+              <p className="text-red-500 text-[6px] md:text-[8px] font-black uppercase tracking-widest mb-0.5 md:mb-1">Time Left</p>
               <p className={cn(
-                "text-2xl font-black italic",
+                "text-xl md:text-2xl font-black italic leading-none",
                 turnTimer <= 2 ? "text-red-500 animate-pulse" : "text-white"
               )}>{turnTimer}s</p>
             </div>
@@ -97,9 +97,9 @@ export const GameOverlay: React.FC<GameOverlayProps> = ({
           onClick={() => setShowExitConfirm(true)}
           variant="ghost" 
           size="sm" 
-          className="pointer-events-auto bg-black/60 backdrop-blur-xl border border-white/10 hover:bg-red-500/20 hover:text-red-500 font-black tracking-widest uppercase text-[10px]"
+          className="pointer-events-auto bg-black/60 backdrop-blur-xl border border-white/10 hover:bg-red-500/20 hover:text-red-500 font-black tracking-widest uppercase text-[8px] md:text-[10px] w-full md:w-auto py-3 md:py-2"
         >
-          <X className="w-4 h-4 mr-2" />
+          <X className="w-3 h-3 md:w-4 md:h-4 mr-2" />
           Exit Match
         </Button>
       </div>
@@ -150,7 +150,7 @@ export const GameOverlay: React.FC<GameOverlayProps> = ({
               initial={{ scale: 0.5, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 2, opacity: 0 }}
-              className="text-[15rem] font-black italic text-white drop-shadow-[0_0_80px_rgba(255,255,255,0.2)] uppercase tracking-tighter"
+              className="text-[8rem] md:text-[15rem] font-black italic text-white drop-shadow-[0_0_80px_rgba(255,255,255,0.2)] uppercase tracking-tighter"
             >
               {countdown}
             </motion.div>
@@ -161,7 +161,7 @@ export const GameOverlay: React.FC<GameOverlayProps> = ({
               key="match-result"
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="flex flex-col items-center gap-10 bg-zinc-950/90 backdrop-blur-3xl p-20 rounded-sm border-2 border-white/5 shadow-[0_0_100px_rgba(0,0,0,0.8)] relative overflow-hidden"
+              className="flex flex-col items-center gap-6 md:gap-10 bg-zinc-950/90 backdrop-blur-3xl p-8 md:p-20 rounded-sm border-2 border-white/5 shadow-[0_0_100px_rgba(0,0,0,0.8)] relative overflow-hidden w-full max-w-2xl mx-4"
             >
               {/* Animated Background Glow */}
               <motion.div 
@@ -176,13 +176,13 @@ export const GameOverlay: React.FC<GameOverlayProps> = ({
                 )}
               />
 
-              <div className="flex flex-col items-center gap-4">
+              <div className="flex flex-col items-center gap-3 md:gap-4">
                 <motion.div
                   initial={{ y: -20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.2 }}
                   className={cn(
-                    "px-6 py-2 rounded-sm border text-[10px] font-black uppercase tracking-[0.5em]",
+                    "px-4 md:px-6 py-1 md:py-2 rounded-sm border text-[8px] md:text-[10px] font-black uppercase tracking-[0.3em] md:tracking-[0.5em]",
                     matchResult === 'win' ? "border-red-500/30 text-red-500 bg-red-500/5" : "border-red-500/30 text-red-500 bg-red-500/5"
                   )}
                 >
@@ -193,7 +193,7 @@ export const GameOverlay: React.FC<GameOverlayProps> = ({
                   animate={{ scale: [1, 1.02, 1] }}
                   transition={{ repeat: Infinity, duration: 2 }}
                   className={cn(
-                    "text-[12rem] font-black italic uppercase tracking-tighter leading-none drop-shadow-2xl",
+                    "text-5xl md:text-[12rem] font-black italic uppercase tracking-tighter leading-none drop-shadow-2xl",
                     matchResult === 'win' ? "text-white" : "text-white"
                   )}
                 >
@@ -205,19 +205,19 @@ export const GameOverlay: React.FC<GameOverlayProps> = ({
                 </motion.h2>
               </div>
 
-              <div className="grid grid-cols-3 gap-12 w-full max-w-2xl items-center">
-                <div className="text-center space-y-2">
-                  <p className="text-zinc-500 text-[10px] font-black uppercase tracking-widest">Your Score</p>
-                  <p className="text-6xl font-black text-white italic">{playerScore}</p>
+              <div className="grid grid-cols-3 gap-4 md:gap-12 w-full items-center">
+                <div className="text-center space-y-1 md:space-y-2">
+                  <p className="text-zinc-500 text-[8px] md:text-[10px] font-black uppercase tracking-widest">Your Score</p>
+                  <p className="text-3xl md:text-6xl font-black text-white italic">{playerScore}</p>
                 </div>
                 <div className="flex flex-col items-center">
-                  <div className="h-px w-full bg-white/10 mb-4" />
-                  <p className="text-zinc-600 font-black italic text-2xl">FINAL</p>
-                  <div className="h-px w-full bg-white/10 mt-4" />
+                  <div className="h-px w-full bg-white/10 mb-2 md:mb-4" />
+                  <p className="text-zinc-600 font-black italic text-sm md:text-2xl">FINAL</p>
+                  <div className="h-px w-full bg-white/10 mt-2 md:mt-4" />
                 </div>
-                <div className="text-center space-y-2">
-                  <p className="text-zinc-500 text-[10px] font-black uppercase tracking-widest">Opponent</p>
-                  <p className="text-6xl font-black text-white italic">{opponentScore}</p>
+                <div className="text-center space-y-1 md:space-y-2">
+                  <p className="text-zinc-500 text-[8px] md:text-[10px] font-black uppercase tracking-widest">Opponent</p>
+                  <p className="text-3xl md:text-6xl font-black text-white italic">{opponentScore}</p>
                 </div>
               </div>
 
@@ -226,7 +226,7 @@ export const GameOverlay: React.FC<GameOverlayProps> = ({
                   onClick={onExit}
                   size="xl" 
                   className={cn(
-                    "pointer-events-auto w-full py-8 font-black tracking-[0.3em] uppercase text-lg rounded-sm transition-all",
+                    "pointer-events-auto w-full py-6 md:py-8 font-black tracking-[0.2em] md:tracking-[0.3em] uppercase text-sm md:text-lg rounded-sm transition-all",
                     matchResult === 'win' 
                       ? "bg-red-600 hover:bg-red-500 text-white shadow-[0_0_30px_rgba(220,38,38,0.3)]" 
                       : "bg-zinc-900 hover:bg-zinc-800 text-white border border-white/10"
@@ -243,16 +243,16 @@ export const GameOverlay: React.FC<GameOverlayProps> = ({
               key="result"
               initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              className="flex flex-col items-center gap-6"
+              className="flex flex-col items-center gap-4 md:gap-6"
             >
               <h2 className={cn(
-                "text-[8rem] font-black italic uppercase tracking-tighter drop-shadow-[0_0_30px_rgba(0,0,0,0.8)] leading-none",
+                "text-4xl md:text-[8rem] font-black italic uppercase tracking-tighter drop-shadow-[0_0_30px_rgba(0,0,0,0.8)] leading-none",
                 result === 'win' ? "text-red-500" : 
                 result === 'loss' ? "text-red-600" : "text-zinc-400"
               )}>
                 {result === 'win' ? 'ROUND WIN' : result === 'loss' ? 'ROUND LOSS' : 'DRAW'}
               </h2>
-              <div className="px-10 py-3 bg-black/60 backdrop-blur-2xl border border-white/10 rounded-full text-white font-black uppercase tracking-[0.3em] text-[10px] shadow-2xl">
+              <div className="px-6 md:px-10 py-2 md:py-3 bg-black/60 backdrop-blur-2xl border border-white/10 rounded-full text-white font-black uppercase tracking-[0.2em] md:tracking-[0.3em] text-[8px] md:text-[10px] shadow-2xl">
                 {playerMove} vs {opponentMove}
               </div>
             </motion.div>
@@ -261,14 +261,14 @@ export const GameOverlay: React.FC<GameOverlayProps> = ({
       </div>
 
       {/* Bottom Bar: Controls */}
-      <div className="p-16 flex flex-col items-center gap-10">
+      <div className="p-8 md:p-16 flex flex-col items-center gap-6 md:gap-10">
         <AnimatePresence>
           {!playerMove && !isRevealing && !matchResult && (
             <motion.div 
               initial={{ y: 100, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 100, opacity: 0 }}
-              className="flex gap-8 pointer-events-auto"
+              className="flex gap-4 md:gap-8 pointer-events-auto"
             >
               <MoveButton move="rock" onClick={() => onMove('rock')} />
               <MoveButton move="paper" onClick={() => onMove('paper')} />
@@ -280,7 +280,7 @@ export const GameOverlay: React.FC<GameOverlayProps> = ({
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-red-500 font-black uppercase tracking-[0.5em] text-[10px] animate-pulse bg-red-500/5 px-8 py-3 rounded-full border border-red-500/20"
+              className="text-red-500 font-black uppercase tracking-[0.3em] md:tracking-[0.5em] text-[8px] md:text-[10px] animate-pulse bg-red-500/5 px-6 md:px-8 py-2 md:py-3 rounded-full border border-red-500/20"
             >
               Waiting for reveal...
             </motion.div>
@@ -297,17 +297,17 @@ const MoveButton = ({ move, onClick }: { move: Move; onClick: () => void }) => (
     whileHover={{ scale: 1.1, y: -15 }}
     whileTap={{ scale: 0.9 }}
     onClick={onClick}
-    className="group relative w-32 h-32 bg-zinc-950 border-2 border-white/5 rounded-[2rem] flex flex-col items-center justify-center gap-3 transition-all hover:border-red-500/50 hover:bg-zinc-900 shadow-[0_0_30px_rgba(0,0,0,0.5)]"
+    className="group relative w-24 h-24 md:w-32 md:h-32 bg-zinc-950 border-2 border-white/5 rounded-2xl md:rounded-[2rem] flex flex-col items-center justify-center gap-2 md:gap-3 transition-all hover:border-red-500/50 hover:bg-zinc-900 shadow-[0_0_30px_rgba(0,0,0,0.5)]"
   >
     <div className="text-zinc-500 group-hover:text-red-500 transition-colors">
-      {move === 'rock' ? <Hand className="w-12 h-12 rotate-[-45deg]" /> : 
-       move === 'paper' ? <Hand className="w-12 h-12" /> : 
-       <Scissors className="w-12 h-12 rotate-90" />}
+      {move === 'rock' ? <Hand className="w-8 h-8 md:w-12 md:h-12 rotate-[-45deg]" /> : 
+       move === 'paper' ? <Hand className="w-8 h-8 md:w-12 md:h-12" /> : 
+       <Scissors className="w-8 h-8 md:w-12 md:h-12 rotate-90" />}
     </div>
-    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-600 group-hover:text-red-500 transition-colors">
+    <span className="text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] text-zinc-600 group-hover:text-red-500 transition-colors">
       {move}
     </span>
-    <div className="absolute inset-0 rounded-[2rem] bg-red-500/0 group-hover:bg-red-500/5 transition-colors" />
+    <div className="absolute inset-0 rounded-2xl md:rounded-[2rem] bg-red-500/0 group-hover:bg-red-500/5 transition-colors" />
   </motion.button>
 );
 

@@ -53,26 +53,26 @@ export const MatchHistory: React.FC<MatchHistoryProps> = ({ profile, onClose }) 
       <motion.div 
         initial={{ opacity: 0, scale: 0.9, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        className="w-full max-w-2xl bg-zinc-950 border border-white/10 rounded-sm overflow-hidden flex flex-col max-h-[80vh]"
+        className="w-full max-w-2xl bg-zinc-950 border border-white/10 rounded-sm overflow-hidden flex flex-col max-h-[90vh] md:max-h-[80vh]"
       >
         {/* Header */}
-        <div className="p-6 border-b border-white/10 flex items-center justify-between bg-zinc-900/50">
+        <div className="p-4 md:p-6 border-b border-white/10 flex items-center justify-between bg-zinc-900/50">
           <div className="flex items-center gap-3">
             <div>
-              <h2 className="text-xl font-black tracking-tighter text-white uppercase not-italic">Match History</h2>
-              <p className="text-[10px] text-zinc-500 font-bold tracking-widest uppercase">Recent Combat Logs</p>
+              <h2 className="text-lg md:text-xl font-black tracking-tighter text-white uppercase not-italic">Match History</h2>
+              <p className="text-[8px] md:text-[10px] text-zinc-500 font-bold tracking-widest uppercase">Recent Combat Logs</p>
             </div>
           </div>
           <button 
             onClick={onClose}
             className="p-2 hover:bg-white/5 rounded-sm transition-colors text-zinc-500 hover:text-white"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4 md:w-5 md:h-5" />
           </button>
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-3 md:space-y-4 custom-scrollbar">
           {loading ? (
             <div className="flex flex-col items-center justify-center py-20 gap-4">
               <div className="w-12 h-12 border-2 border-red-500/20 border-t-red-500 rounded-full animate-spin" />

@@ -48,27 +48,27 @@ export const CookieConsent: React.FC<CookieConsentProps> = ({ onAccept }) => {
         <motion.div 
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          className="w-full max-w-2xl bg-zinc-950 border border-white/5 rounded-[3rem] p-12 shadow-[0_0_50px_rgba(0,0,0,0.5)]"
+          className="w-full max-w-2xl bg-zinc-950 border border-white/5 rounded-[2rem] md:rounded-[3rem] p-6 md:p-12 shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-y-auto max-h-[90vh]"
         >
-          <div className="flex flex-col items-center text-center gap-10">
-            <div className="w-24 h-24 bg-red-500/10 rounded-[2rem] flex items-center justify-center border border-red-500/20 shadow-[0_0_30px_rgba(220,38,38,0.1)]">
-              <Cookie className="w-12 h-12 text-red-500" />
+          <div className="flex flex-col items-center text-center gap-6 md:gap-10">
+            <div className="w-16 h-16 md:w-24 md:h-24 bg-red-500/10 rounded-[1.5rem] md:rounded-[2rem] flex items-center justify-center border border-red-500/20 shadow-[0_0_30px_rgba(220,38,38,0.1)]">
+              <Cookie className="w-8 h-8 md:w-12 md:h-12 text-red-500" />
             </div>
-            <div className="space-y-8 w-full">
+            <div className="space-y-6 md:space-y-8 w-full">
               <div>
-                <h2 className="text-4xl font-black text-white uppercase italic tracking-tighter">COOKIE <span className="text-red-500">PROTOCOLS</span></h2>
-                <p className="text-zinc-500 text-[10px] font-black uppercase tracking-[0.3em] mt-4 max-w-md mx-auto leading-relaxed">
+                <h2 className="text-2xl md:text-4xl font-black text-white uppercase italic tracking-tighter">COOKIE <span className="text-red-500">PROTOCOLS</span></h2>
+                <p className="text-zinc-500 text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] md:tracking-[0.3em] mt-3 md:mt-4 max-w-md mx-auto leading-relaxed">
                   To continue to NoLuckRPS, please review our interface parameters. Some protocols are essential for system stability and account persistence.
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left w-full">
-                <div className="p-6 bg-white/5 rounded-[2rem] border border-white/5 flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <Shield className="w-5 h-5 text-green-500" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 text-left w-full">
+                <div className="p-4 md:p-6 bg-white/5 rounded-[1.5rem] md:rounded-[2rem] border border-white/5 flex items-center justify-between">
+                  <div className="flex items-center gap-3 md:gap-4">
+                    <Shield className="w-4 h-4 md:w-5 md:h-5 text-green-500" />
                     <div>
-                      <p className="text-[10px] font-black text-white uppercase tracking-widest">Essential</p>
-                      <p className="text-[9px] text-zinc-500 font-black uppercase tracking-widest mt-1">Session & Auth</p>
+                      <p className="text-[9px] md:text-[10px] font-black text-white uppercase tracking-widest">Essential</p>
+                      <p className="text-[8px] md:text-[9px] text-zinc-500 font-black uppercase tracking-widest mt-1">Session & Auth</p>
                     </div>
                   </div>
                   <div className="w-10 h-6 bg-red-600/50 rounded-full flex items-center px-1 opacity-50 cursor-not-allowed">
@@ -77,14 +77,14 @@ export const CookieConsent: React.FC<CookieConsentProps> = ({ onAccept }) => {
                 </div>
 
                 <div 
-                  className="p-6 bg-white/5 rounded-[2rem] border border-white/5 flex items-center justify-between cursor-pointer hover:bg-white/10 transition-all group"
+                  className="p-4 md:p-6 bg-white/5 rounded-[1.5rem] md:rounded-[2rem] border border-white/5 flex items-center justify-between cursor-pointer hover:bg-white/10 transition-all group"
                   onClick={() => setPreferences(prev => ({ ...prev, analytics: !prev.analytics }))}
                 >
-                  <div className="flex items-center gap-4">
-                    <Info className="w-5 h-5 text-red-500" />
+                  <div className="flex items-center gap-3 md:gap-4">
+                    <Info className="w-4 h-4 md:w-5 md:h-5 text-red-500" />
                     <div>
-                      <p className="text-[10px] font-black text-white uppercase tracking-widest">Analytics</p>
-                      <p className="text-[9px] text-zinc-500 font-black uppercase tracking-widest mt-1">Game Stats</p>
+                      <p className="text-[9px] md:text-[10px] font-black text-white uppercase tracking-widest">Analytics</p>
+                      <p className="text-[8px] md:text-[9px] text-zinc-500 font-black uppercase tracking-widest mt-1">Game Stats</p>
                     </div>
                   </div>
                   <div className={`w-10 h-6 rounded-full flex items-center px-1 transition-all ${preferences.analytics ? 'bg-red-600' : 'bg-zinc-800'}`}>
@@ -96,14 +96,14 @@ export const CookieConsent: React.FC<CookieConsentProps> = ({ onAccept }) => {
                 </div>
 
                 <div 
-                  className="p-6 bg-white/5 rounded-[2rem] border border-white/5 flex items-center justify-between cursor-pointer hover:bg-white/10 transition-all group"
+                  className="p-4 md:p-6 bg-white/5 rounded-[1.5rem] md:rounded-[2rem] border border-white/5 flex items-center justify-between cursor-pointer hover:bg-white/10 transition-all group"
                   onClick={() => setPreferences(prev => ({ ...prev, performance: !prev.performance }))}
                 >
-                  <div className="flex items-center gap-4">
-                    <Check className="w-5 h-5 text-purple-500" />
+                  <div className="flex items-center gap-3 md:gap-4">
+                    <Check className="w-4 h-4 md:w-5 md:h-5 text-purple-500" />
                     <div>
-                      <p className="text-[10px] font-black text-white uppercase tracking-widest">Performance</p>
-                      <p className="text-[9px] text-zinc-500 font-black uppercase tracking-widest mt-1">Asset Loading</p>
+                      <p className="text-[9px] md:text-[10px] font-black text-white uppercase tracking-widest">Performance</p>
+                      <p className="text-[8px] md:text-[9px] text-zinc-500 font-black uppercase tracking-widest mt-1">Asset Loading</p>
                     </div>
                   </div>
                   <div className={`w-10 h-6 rounded-full flex items-center px-1 transition-all ${preferences.performance ? 'bg-red-600' : 'bg-zinc-800'}`}>
@@ -115,14 +115,14 @@ export const CookieConsent: React.FC<CookieConsentProps> = ({ onAccept }) => {
                 </div>
 
                 <div 
-                  className="p-6 bg-white/5 rounded-[2rem] border border-white/5 flex items-center justify-between cursor-pointer hover:bg-white/10 transition-all group"
+                  className="p-4 md:p-6 bg-white/5 rounded-[1.5rem] md:rounded-[2rem] border border-white/5 flex items-center justify-between cursor-pointer hover:bg-white/10 transition-all group"
                   onClick={() => setPreferences(prev => ({ ...prev, marketing: !prev.marketing }))}
                 >
-                  <div className="flex items-center gap-4">
-                    <Flame className="w-5 h-5 text-red-500" />
+                  <div className="flex items-center gap-3 md:gap-4">
+                    <Flame className="w-4 h-4 md:w-5 md:h-5 text-red-500" />
                     <div>
-                      <p className="text-[10px] font-black text-white uppercase tracking-widest">Marketing</p>
-                      <p className="text-[9px] text-zinc-500 font-black uppercase tracking-widest mt-1">Promotions</p>
+                      <p className="text-[9px] md:text-[10px] font-black text-white uppercase tracking-widest">Marketing</p>
+                      <p className="text-[8px] md:text-[9px] text-zinc-500 font-black uppercase tracking-widest mt-1">Promotions</p>
                     </div>
                   </div>
                   <div className={`w-10 h-6 rounded-full flex items-center px-1 transition-all ${preferences.marketing ? 'bg-red-600' : 'bg-zinc-800'}`}>
@@ -134,18 +134,18 @@ export const CookieConsent: React.FC<CookieConsentProps> = ({ onAccept }) => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-6 pt-6 w-full">
+              <div className="flex flex-col sm:flex-row items-center gap-3 md:gap-6 pt-4 md:pt-6 w-full">
                 <Button 
                   onClick={handleAcceptSelected}
                   variant="secondary" 
-                  className="flex-1 py-6 text-[10px] font-black uppercase tracking-[0.3em] border-white/10 italic rounded-3xl"
+                  className="w-full sm:flex-1 py-4 md:py-6 text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] md:tracking-[0.3em] border-white/10 italic rounded-2xl md:rounded-3xl"
                 >
                   SAVE CONFIG
                 </Button>
                 <Button 
                   onClick={handleAcceptAll}
                   variant="primary" 
-                  className="flex-1 py-6 text-[10px] font-black uppercase tracking-[0.3em] bg-red-600 hover:bg-red-700 border-none italic rounded-3xl shadow-xl shadow-red-900/20"
+                  className="w-full sm:flex-1 py-4 md:py-6 text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] md:tracking-[0.3em] bg-red-600 hover:bg-red-700 border-none italic rounded-2xl md:rounded-3xl shadow-xl shadow-red-900/20"
                 >
                   ACCEPT ALL
                 </Button>

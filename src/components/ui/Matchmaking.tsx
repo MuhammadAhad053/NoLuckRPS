@@ -62,7 +62,7 @@ export const Matchmaking: React.FC<MatchmakingProps> = ({ profile, onCancel, sta
         </div>
       </div>
 
-      <div className="relative z-10 w-full max-w-4xl flex flex-col items-center">
+      <div className="relative z-10 w-full max-w-4xl flex flex-col items-center px-4">
         <AnimatePresence mode="wait">
           {status === 'searching' ? (
             <motion.div 
@@ -70,11 +70,11 @@ export const Matchmaking: React.FC<MatchmakingProps> = ({ profile, onCancel, sta
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 1.1 }}
-              className="flex flex-col items-center space-y-12"
+              className="flex flex-col items-center space-y-8 md:space-y-12"
             >
               {/* Searching Animation */}
               <div className="relative">
-                <div className="w-56 h-56 rounded-full border-4 border-red-500/10 flex items-center justify-center">
+                <div className="w-40 h-40 md:w-56 md:h-56 rounded-full border-4 border-red-500/10 flex items-center justify-center">
                   <motion.div 
                     animate={{ rotate: 360 }}
                     transition={{ repeat: Infinity, duration: 3, ease: "linear" }}
@@ -83,69 +83,57 @@ export const Matchmaking: React.FC<MatchmakingProps> = ({ profile, onCancel, sta
                   <motion.div 
                     animate={{ rotate: -360 }}
                     transition={{ repeat: Infinity, duration: 6, ease: "linear" }}
-                    className="absolute inset-4 rounded-full border-4 border-b-red-500/30"
+                    className="absolute inset-2 md:inset-4 rounded-full border-4 border-b-red-500/30"
                   />
                   <img 
                     src={profile.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${profile.uid}`} 
                     alt="Me" 
-                    className="w-40 h-40 rounded-full border-4 border-zinc-950 bg-zinc-900 shadow-2xl"
+                    className="w-28 h-28 md:w-40 md:h-40 rounded-full border-4 border-zinc-950 bg-zinc-900 shadow-2xl"
                     style={{ borderColor: currentRank.color }}
                   />
                 </div>
                 <div 
-                  className="absolute -bottom-4 left-1/2 -translate-x-1/2 px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.2em] border-2 border-zinc-950 shadow-xl"
+                  className="absolute -bottom-3 md:-bottom-4 left-1/2 -translate-x-1/2 px-4 md:px-6 py-1 md:py-2 rounded-full text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] border-2 border-zinc-950 shadow-xl"
                   style={{ backgroundColor: currentRank.color, color: profile.rank === 'Champion' ? 'white' : 'black' }}
                 >
                   {profile.rank}
                 </div>
               </div>
 
-              <div className="text-center space-y-6">
+              <div className="text-center space-y-4 md:space-y-6">
                 <div className="space-y-2">
-                  <h2 className="text-6xl font-black tracking-tighter text-white uppercase italic">
+                  <h2 className="text-3xl md:text-6xl font-black tracking-tighter text-white uppercase italic">
                     {partyCode ? 'WAITING FOR' : 'SEARCHING FOR'} <span className="text-red-500">{partyCode ? 'FRIEND' : 'OPPONENT'}</span>
                   </h2>
-                  <p className="text-zinc-500 font-bold tracking-[0.4em] uppercase text-[10px] animate-pulse">
+                  <p className="text-zinc-500 font-bold tracking-[0.4em] uppercase text-[8px] md:text-[10px] animate-pulse">
                     Tactical Protocol Active
                   </p>
                 </div>
                 
                 {partyCode && (
-                  <div className="flex flex-col items-center space-y-4">
-                    <p className="text-zinc-500 text-[10px] font-black uppercase tracking-[0.3em]">Share Party Code</p>
+                  <div className="flex flex-col items-center space-y-3 md:space-y-4">
+                    <p className="text-zinc-500 text-[8px] md:text-[10px] font-black uppercase tracking-[0.3em]">Share Party Code</p>
                     <div 
                       onClick={copyCode}
-                      className="group relative flex items-center gap-6 bg-zinc-900/50 border border-white/5 px-10 py-5 rounded-3xl cursor-pointer hover:bg-zinc-900 transition-all hover:border-red-500/30"
+                      className="group relative flex items-center gap-4 md:gap-6 bg-zinc-900/50 border border-white/5 px-6 md:px-10 py-3 md:py-5 rounded-2xl md:rounded-3xl cursor-pointer hover:bg-zinc-900 transition-all hover:border-red-500/30"
                     >
-                      <span className="text-5xl font-black tracking-[0.4em] text-white font-mono">{partyCode}</span>
-                      {copied ? <Check className="w-8 h-8 text-green-500" /> : <Copy className="w-8 h-8 text-zinc-500 group-hover:text-white" />}
-                      <AnimatePresence>
-                        {copied && (
-                          <motion.div 
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
-                            className="absolute -top-10 left-1/2 -translate-x-1/2 text-[10px] font-black text-green-500 uppercase tracking-widest"
-                          >
-                            Copied to Clipboard
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
+                      <span className="text-2xl md:text-5xl font-black tracking-[0.4em] text-white font-mono">{partyCode}</span>
+                      {copied ? <Check className="w-5 h-5 md:w-8 md:h-8 text-green-500" /> : <Copy className="w-5 h-5 md:w-8 md:h-8 text-zinc-500 group-hover:text-white" />}
                     </div>
                   </div>
                 )}
 
-                <div className="flex items-center justify-center gap-10 bg-white/5 p-8 rounded-[2rem] border border-white/5">
+                <div className="flex items-center justify-center gap-6 md:gap-10 bg-white/5 p-6 md:p-8 rounded-2xl md:rounded-[2rem] border border-white/5">
                   <div className="flex flex-col items-center">
-                    <p className="text-zinc-500 text-[10px] font-black uppercase tracking-widest mb-2">Time Elapsed</p>
-                    <p className="text-3xl font-black text-white font-mono italic">{formatTime(searchTime)}</p>
+                    <p className="text-zinc-500 text-[8px] md:text-[10px] font-black uppercase tracking-widest mb-1 md:mb-2">Time Elapsed</p>
+                    <p className="text-xl md:text-3xl font-black text-white font-mono italic">{formatTime(searchTime)}</p>
                   </div>
                   {!partyCode && (
                     <>
-                      <div className="w-px h-12 bg-white/10" />
+                      <div className="w-px h-8 md:h-12 bg-white/10" />
                       <div className="flex flex-col items-center">
-                        <p className="text-zinc-500 text-[10px] font-black uppercase tracking-widest mb-2">ELO Range</p>
-                        <p className="text-3xl font-black text-red-500 font-mono italic">±100</p>
+                        <p className="text-zinc-500 text-[8px] md:text-[10px] font-black uppercase tracking-widest mb-1 md:mb-2">ELO Range</p>
+                        <p className="text-xl md:text-3xl font-black text-red-500 font-mono italic">±100</p>
                       </div>
                     </>
                   )}
@@ -156,9 +144,9 @@ export const Matchmaking: React.FC<MatchmakingProps> = ({ profile, onCancel, sta
                 onClick={onCancel}
                 variant="ghost" 
                 size="lg" 
-                className="text-zinc-500 hover:text-red-500 hover:bg-red-500/5 border border-white/5 px-10 py-6 font-black tracking-widest uppercase text-xs"
+                className="text-zinc-500 hover:text-red-500 hover:bg-red-500/5 border border-white/5 px-8 md:px-10 py-4 md:py-6 font-black tracking-widest uppercase text-[10px] md:text-xs"
               >
-                <X className="w-5 h-5 mr-2" />
+                <X className="w-4 h-4 md:w-5 md:h-5 mr-2" />
                 Abort Protocol
               </Button>
             </motion.div>
@@ -167,15 +155,15 @@ export const Matchmaking: React.FC<MatchmakingProps> = ({ profile, onCancel, sta
               key="found"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="flex flex-col items-center space-y-16 w-full"
+              className="flex flex-col items-center space-y-8 md:space-y-16 w-full"
             >
-              <div className="flex items-center justify-center w-full gap-8 md:gap-24">
+              <div className="flex flex-col md:flex-row items-center justify-center w-full gap-8 md:gap-24">
                 {/* ME */}
                 <motion.div 
                   initial={{ x: -100, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ type: 'spring', damping: 12, stiffness: 100 }}
-                  className="flex flex-col items-center space-y-6"
+                  className="flex flex-col items-center space-y-4 md:space-y-6"
                 >
                   <div className="relative group">
                     <motion.div 
@@ -186,19 +174,19 @@ export const Matchmaking: React.FC<MatchmakingProps> = ({ profile, onCancel, sta
                     <img 
                       src={profile.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${profile.uid}`} 
                       alt="Me" 
-                      className="w-48 h-48 rounded-sm border-4 p-2 bg-zinc-900 shadow-2xl relative z-10"
+                      className="w-32 h-32 md:w-48 md:h-48 rounded-sm border-4 p-2 bg-zinc-900 shadow-2xl relative z-10"
                       style={{ borderColor: currentRank.color }}
                     />
                     <div 
-                      className="absolute -bottom-3 -right-3 px-5 py-2 rounded-sm text-[10px] font-black uppercase tracking-widest border-2 border-zinc-950 shadow-xl z-20"
+                      className="absolute -bottom-2 md:-bottom-3 -right-2 md:-right-3 px-3 md:px-5 py-1 md:py-2 rounded-sm text-[8px] md:text-[10px] font-black uppercase tracking-widest border-2 border-zinc-950 shadow-xl z-20"
                       style={{ backgroundColor: currentRank.color, color: profile.rank === 'Champion' ? 'white' : 'black' }}
                     >
                       {profile.rank}
                     </div>
                   </div>
                   <div className="text-center relative z-10">
-                    <p className="text-white font-black text-3xl uppercase italic tracking-tighter">{profile.displayName}</p>
-                    <p className="text-red-500 text-[10px] font-black uppercase tracking-[0.3em] mt-2">{profile.username}</p>
+                    <p className="text-white font-black text-xl md:text-3xl uppercase italic tracking-tighter">{profile.displayName}</p>
+                    <p className="text-red-500 text-[8px] md:text-[10px] font-black uppercase tracking-[0.3em] mt-1 md:mt-2">{profile.username}</p>
                   </div>
                 </motion.div>
 
@@ -208,17 +196,17 @@ export const Matchmaking: React.FC<MatchmakingProps> = ({ profile, onCancel, sta
                     initial={{ scale: 5, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ delay: 0.3, type: 'spring', damping: 15 }}
-                    className="text-[12rem] font-black text-white italic uppercase leading-none tracking-tighter drop-shadow-[0_0_50px_rgba(255,255,255,0.2)]"
+                    className="text-6xl md:text-[12rem] font-black text-white italic uppercase leading-none tracking-tighter drop-shadow-[0_0_50px_rgba(255,255,255,0.2)]"
                   >
                     VS
                   </motion.div>
                   <motion.div 
                     initial={{ scale: 0 }}
-                    animate={{ scale: 1.5 }}
+                    animate={{ scale: 1 }}
                     transition={{ delay: 0.6, type: 'spring' }}
                     className="absolute inset-0 flex items-center justify-center"
                   >
-                    <Zap className="w-24 h-24 text-red-500 fill-red-500 drop-shadow-[0_0_40px_rgba(220,38,38,0.8)]" />
+                    <Zap className="w-12 h-12 md:w-24 md:h-24 text-red-500 fill-red-500 drop-shadow-[0_0_40px_rgba(220,38,38,0.8)]" />
                   </motion.div>
                 </div>
 
@@ -227,7 +215,7 @@ export const Matchmaking: React.FC<MatchmakingProps> = ({ profile, onCancel, sta
                   initial={{ x: 100, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ type: 'spring', damping: 12, stiffness: 100 }}
-                  className="flex flex-col items-center space-y-6"
+                  className="flex flex-col items-center space-y-4 md:space-y-6"
                 >
                   <div className="relative group">
                     <motion.div 
@@ -238,11 +226,11 @@ export const Matchmaking: React.FC<MatchmakingProps> = ({ profile, onCancel, sta
                     <img 
                       src={opponent?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${opponent?.username}`} 
                       alt="Opponent" 
-                      className="w-48 h-48 rounded-sm border-4 p-2 bg-zinc-900 shadow-2xl relative z-10"
+                      className="w-32 h-32 md:w-48 md:h-48 rounded-sm border-4 p-2 bg-zinc-900 shadow-2xl relative z-10"
                       style={{ borderColor: opponent ? RANKS[opponent.rank as keyof typeof RANKS]?.color : '#dc2626' }}
                     />
                     <div 
-                      className="absolute -bottom-3 -right-3 px-5 py-2 rounded-sm text-[10px] font-black uppercase tracking-widest border-2 border-zinc-950 shadow-xl z-20"
+                      className="absolute -bottom-2 md:-bottom-3 -right-2 md:-right-3 px-3 md:px-5 py-1 md:py-2 rounded-sm text-[8px] md:text-[10px] font-black uppercase tracking-widest border-2 border-zinc-950 shadow-xl z-20"
                       style={{ 
                         backgroundColor: opponent ? RANKS[opponent.rank as keyof typeof RANKS]?.color : '#dc2626',
                         color: opponent?.rank === 'Champion' ? 'white' : 'black'
@@ -252,8 +240,8 @@ export const Matchmaking: React.FC<MatchmakingProps> = ({ profile, onCancel, sta
                     </div>
                   </div>
                   <div className="text-center relative z-10">
-                    <p className="text-white font-black text-3xl uppercase italic tracking-tighter">{opponent?.displayName}</p>
-                    <p className="text-red-500 text-[10px] font-black uppercase tracking-[0.3em] mt-2">{opponent?.username}</p>
+                    <p className="text-white font-black text-xl md:text-3xl uppercase italic tracking-tighter">{opponent?.displayName}</p>
+                    <p className="text-red-500 text-[8px] md:text-[10px] font-black uppercase tracking-[0.3em] mt-1 md:mt-2">{opponent?.username}</p>
                   </div>
                 </motion.div>
               </div>
@@ -264,11 +252,11 @@ export const Matchmaking: React.FC<MatchmakingProps> = ({ profile, onCancel, sta
                 transition={{ delay: 0.8 }}
                 className="text-center space-y-4"
               >
-                <h3 className="text-6xl font-black text-white uppercase italic tracking-tighter drop-shadow-[0_0_30px_rgba(255,255,255,0.1)]">MATCH ESTABLISHED</h3>
+                <h3 className="text-3xl md:text-6xl font-black text-white uppercase italic tracking-tighter drop-shadow-[0_0_30px_rgba(255,255,255,0.1)]">MATCH ESTABLISHED</h3>
                 <div className="flex items-center justify-center gap-4">
-                  <div className="h-px w-12 bg-red-500/50" />
-                  <p className="text-red-500 text-[10px] font-black uppercase tracking-[0.5em] animate-pulse">Synchronizing Arena Parameters</p>
-                  <div className="h-px w-12 bg-red-500/50" />
+                  <div className="h-px w-8 md:w-12 bg-red-500/50" />
+                  <p className="text-red-500 text-[8px] md:text-[10px] font-black uppercase tracking-[0.5em] animate-pulse">Synchronizing Arena Parameters</p>
+                  <div className="h-px w-8 md:w-12 bg-red-500/50" />
                 </div>
               </motion.div>
             </motion.div>

@@ -82,58 +82,63 @@ export const Profile: React.FC<ProfileProps> = ({ profile, onClose, onUpdateUser
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/90 backdrop-blur-md font-orbitron"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-6 bg-black/90 backdrop-blur-md font-orbitron"
     >
       <motion.div 
         initial={{ scale: 0.9, y: 20 }}
         animate={{ scale: 1, y: 0 }}
         exit={{ scale: 0.9, y: 20 }}
-        className="relative w-full max-w-5xl bg-zinc-950 border border-white/5 rounded-sm overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] flex flex-col max-h-[90vh]"
+        className="relative w-full max-w-5xl bg-zinc-950 border border-white/5 rounded-sm overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] flex flex-col max-h-[95vh] md:max-h-[90vh]"
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-10 border-b border-white/5 bg-gradient-to-r from-zinc-900/50 to-transparent">
-          <div className="flex items-center gap-6">
-            <div className="w-16 h-16 bg-red-500/10 rounded-sm flex items-center justify-center border border-red-500/20 shadow-[0_0_30px_rgba(220,38,38,0.1)]">
-              <UserIcon className="w-8 h-8 text-red-500" />
+        <div className="flex items-center justify-between p-6 md:p-10 border-b border-white/5 bg-gradient-to-r from-zinc-900/50 to-transparent">
+          <div className="flex items-center gap-4 md:gap-6">
+            <div className="w-12 h-12 md:w-16 md:h-16 bg-red-500/10 rounded-sm flex items-center justify-center border border-red-500/20 shadow-[0_0_30px_rgba(220,38,38,0.1)]">
+              <UserIcon className="w-6 h-6 md:w-8 md:h-8 text-red-500" />
             </div>
             <div>
-              <h2 className="text-4xl font-black tracking-tighter text-white uppercase not-italic leading-none">PLAYER <span className="text-red-500">DOSSIER</span></h2>
-              <p className="text-zinc-500 text-[10px] font-black uppercase tracking-[0.4em] mt-2">Combat Statistics & Metadata</p>
+              <h2 className="text-2xl md:text-4xl font-black tracking-tighter text-white uppercase not-italic leading-none">PLAYER <span className="text-red-500">DOSSIER</span></h2>
+              <p className="text-zinc-500 text-[8px] md:text-[10px] font-black uppercase tracking-[0.4em] mt-2">Combat Statistics & Metadata</p>
             </div>
           </div>
           <Button 
             variant="ghost" 
             size="sm" 
             onClick={onClose} 
-            className="p-3 rounded-sm bg-white/5 hover:bg-red-500/10 hover:text-red-500 transition-all border border-white/5"
+            className="p-2 md:p-3 rounded-sm bg-white/5 hover:bg-red-500/10 hover:text-red-500 transition-all border border-white/5"
           >
-            <X className="w-6 h-6" />
+            <X className="w-5 h-5 md:w-6 md:h-6" />
           </Button>
         </div>
 
         {/* Content */}
-        <div className="p-10 grid grid-cols-1 lg:grid-cols-12 gap-10 overflow-y-auto custom-scrollbar">
+        <div className="p-6 md:p-10 grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-10 overflow-y-auto custom-scrollbar">
           
           {/* Left: Avatar & Rank */}
-          <div className="lg:col-span-4 flex flex-col items-center text-center space-y-8">
+          <div className="lg:col-span-4 flex flex-col items-center text-center space-y-6 md:space-y-8">
             <div className="relative group">
               <div className="absolute inset-0 bg-red-500/20 blur-[40px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
               <img 
                 src={profile.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${profile.uid}`} 
                 alt="Avatar" 
-                className="w-56 h-56 rounded-sm border-4 p-2 bg-zinc-900 relative z-10 shadow-2xl"
+                className="w-40 h-40 md:w-56 md:h-56 rounded-sm border-4 p-2 bg-zinc-900 relative z-10 shadow-2xl"
                 style={{ borderColor: currentRank.color }}
               />
               <RankBadge 
                 rank={profile.rank} 
+                size="md" 
+                className="absolute -bottom-2 -right-2 z-20 shadow-2xl scale-110 md:hidden"
+              />
+              <RankBadge 
+                rank={profile.rank} 
                 size="lg" 
-                className="absolute -bottom-4 -right-4 z-20 shadow-2xl scale-125"
+                className="absolute -bottom-4 -right-4 z-20 shadow-2xl scale-125 hidden md:block"
               />
             </div>
             
             <div className="space-y-4 w-full">
               <div className="flex flex-col items-center gap-2">
-                <h3 className="text-4xl font-black text-white uppercase italic tracking-tighter">{profile.displayName}</h3>
+                <h3 className="text-2xl md:text-4xl font-black text-white uppercase italic tracking-tighter">{profile.displayName}</h3>
                 
                 <div className="flex items-center gap-3">
                   <AnimatePresence mode="wait">
@@ -259,24 +264,24 @@ export const Profile: React.FC<ProfileProps> = ({ profile, onClose, onUpdateUser
 
           {/* Right: Detailed Stats */}
           <div className="lg:col-span-8 space-y-10">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <div className="p-8 bg-white/5 rounded-sm border border-white/5 hover:bg-white/10 transition-all">
-                <p className="text-zinc-500 text-[10px] font-black uppercase tracking-widest mb-3">WINS</p>
-                <p className="text-5xl font-black text-green-500 italic tracking-tighter">{profile.wins}</p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4">
+              <div className="p-4 md:p-8 bg-white/5 rounded-sm border border-white/5 hover:bg-white/10 transition-all">
+                <p className="text-zinc-500 text-[8px] md:text-[10px] font-black uppercase tracking-widest mb-1 md:mb-3">WINS</p>
+                <p className="text-2xl md:text-5xl font-black text-green-500 italic tracking-tighter">{profile.wins}</p>
               </div>
-              <div className="p-8 bg-white/5 rounded-sm border border-white/5 hover:bg-white/10 transition-all">
-                <p className="text-zinc-500 text-[10px] font-black uppercase tracking-widest mb-3">LOSSES</p>
-                <p className="text-5xl font-black text-red-500 italic tracking-tighter">{profile.losses}</p>
+              <div className="p-4 md:p-8 bg-white/5 rounded-sm border border-white/5 hover:bg-white/10 transition-all">
+                <p className="text-zinc-500 text-[8px] md:text-[10px] font-black uppercase tracking-widest mb-1 md:mb-3">LOSSES</p>
+                <p className="text-2xl md:text-5xl font-black text-red-500 italic tracking-tighter">{profile.losses}</p>
               </div>
-              <div className="p-8 bg-white/5 rounded-sm border border-white/5 hover:bg-white/10 transition-all">
-                <p className="text-zinc-500 text-[10px] font-black uppercase tracking-widest mb-3">WIN RATE</p>
-                <p className="text-5xl font-black text-red-500 italic tracking-tighter">
+              <div className="p-4 md:p-8 bg-white/5 rounded-sm border border-white/5 hover:bg-white/10 transition-all">
+                <p className="text-zinc-500 text-[8px] md:text-[10px] font-black uppercase tracking-widest mb-1 md:mb-3">WIN RATE</p>
+                <p className="text-2xl md:text-5xl font-black text-red-500 italic tracking-tighter">
                   {profile.matchesPlayed > 0 ? Math.round((profile.wins / profile.matchesPlayed) * 100) : 0}%
                 </p>
               </div>
-              <div className="p-8 bg-white/5 rounded-sm border border-white/5 hover:bg-white/10 transition-all">
-                <p className="text-zinc-500 text-[10px] font-black uppercase tracking-widest mb-3">MATCHES</p>
-                <p className="text-5xl font-black text-white italic tracking-tighter">{profile.matchesPlayed}</p>
+              <div className="p-4 md:p-8 bg-white/5 rounded-sm border border-white/5 hover:bg-white/10 transition-all">
+                <p className="text-zinc-500 text-[8px] md:text-[10px] font-black uppercase tracking-widest mb-1 md:mb-3">MATCHES</p>
+                <p className="text-2xl md:text-5xl font-black text-white italic tracking-tighter">{profile.matchesPlayed}</p>
               </div>
             </div>
 

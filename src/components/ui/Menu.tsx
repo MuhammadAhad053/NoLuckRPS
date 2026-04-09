@@ -111,7 +111,7 @@ export const Menu: React.FC<MenuProps> = ({
   const [unfriendConfirm, setUnfriendConfirm] = useState<{uid: string, username: string} | null>(null);
 
   return (
-    <div className="relative flex flex-col lg:flex-row min-h-screen bg-black text-white font-orbitron p-4 lg:p-8 gap-6 overflow-hidden">
+    <div className="relative flex flex-col lg:flex-row min-h-screen bg-black text-white font-orbitron p-4 md:p-6 lg:p-8 gap-4 md:gap-6 overflow-hidden">
       
       {/* Unfriend Confirmation Modal */}
       <AnimatePresence>
@@ -211,9 +211,9 @@ export const Menu: React.FC<MenuProps> = ({
       <motion.div 
         initial={{ opacity: 0, x: -50 }}
         animate={{ opacity: 1, x: 0 }}
-        className="w-full lg:w-[400px] flex flex-col gap-6"
+        className="w-full lg:w-[400px] flex flex-col gap-4 md:gap-6"
       >
-        <div className="bg-zinc-950/40 backdrop-blur-xl border border-red-500/20 rounded-sm p-6 flex flex-col gap-8 h-full">
+        <div className="bg-zinc-950/40 backdrop-blur-xl border border-red-500/20 rounded-sm p-4 md:p-6 flex flex-col gap-6 md:gap-8 h-full">
           {/* User Header */}
           <div className="flex flex-col gap-4">
             <div className="flex items-center justify-between">
@@ -359,7 +359,7 @@ export const Menu: React.FC<MenuProps> = ({
       </motion.div>
 
       {/* CENTER SECTION: Logo & Actions */}
-      <div className="flex-1 flex flex-col items-center justify-center gap-12 py-12">
+      <div className="flex-1 flex flex-col items-center justify-center gap-8 md:gap-12 py-8 md:py-12">
         {/* Game Logo */}
         <motion.div 
           initial={{ y: -50, opacity: 0 }}
@@ -370,20 +370,25 @@ export const Menu: React.FC<MenuProps> = ({
             <motion.div 
               animate={{ rotate: 360 }}
               transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-              className="w-48 h-48 border-2 border-red-500/10 rounded-full absolute inset-0 blur-3xl"
+              className="w-32 h-32 md:w-48 md:h-48 border-2 border-red-500/10 rounded-full absolute inset-0 blur-3xl"
             />
-            <div className="w-48 h-48 flex items-center justify-center relative z-10">
-              <Logo size={192} />
+            <div className="w-32 h-32 md:w-48 md:h-48 flex items-center justify-center relative z-10">
+              <div className="hidden md:block">
+                <Logo size={192} />
+              </div>
+              <div className="md:hidden">
+                <Logo size={128} />
+              </div>
             </div>
           </div>
-          <h1 className="mt-6 text-4xl font-black tracking-[0.2em] text-white uppercase italic">
+          <h1 className="mt-4 md:mt-6 text-2xl md:text-4xl font-black tracking-[0.2em] text-white uppercase italic">
             NO<span className="text-red-500">LUCK</span>RPS
           </h1>
-          <div className="h-1 w-24 bg-red-500 mt-2 rounded-full shadow-[0_0_15px_rgba(220,38,38,0.5)]" />
+          <div className="h-1 w-16 md:w-24 bg-red-500 mt-2 rounded-full shadow-[0_0_15px_rgba(220,38,38,0.5)]" />
         </motion.div>
 
         {/* Action Buttons */}
-        <div className="w-full max-w-xl space-y-4">
+        <div className="w-full max-w-xl space-y-4 px-4 md:px-0">
           <div className="relative">
             <motion.button
               whileHover={{ scale: 1.02 }}
@@ -393,18 +398,18 @@ export const Menu: React.FC<MenuProps> = ({
                 setShowCustomCodeInput(false);
               }}
               className={cn(
-                "w-full bg-gradient-to-r from-red-700 to-red-500 py-6 px-12 rounded-sm flex items-center justify-between shadow-[0_0_40px_rgba(220,38,38,0.3)] border border-white/20 group transition-all duration-500",
+                "w-full bg-gradient-to-r from-red-700 to-red-500 py-4 md:py-6 px-6 md:px-12 rounded-sm flex items-center justify-between shadow-[0_0_40px_rgba(220,38,38,0.3)] border border-white/20 group transition-all duration-500",
                 showPlayOptions && "rounded-b-none"
               )}
             >
-              <span className="text-4xl font-black italic tracking-widest uppercase">PLAY</span>
+              <span className="text-2xl md:text-4xl font-black italic tracking-widest uppercase">PLAY</span>
               <div className="flex items-center gap-4">
-                <Sword className="w-8 h-8 text-white group-hover:rotate-12 transition-transform" />
+                <Sword className="w-6 h-6 md:w-8 md:h-8 text-white group-hover:rotate-12 transition-transform" />
                 <motion.div
                   animate={{ rotate: showPlayOptions ? 90 : 0 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <ChevronRight className="w-8 h-8 text-white/50" />
+                  <ChevronRight className="w-6 h-6 md:w-8 md:h-8 text-white/50" />
                 </motion.div>
               </div>
             </motion.button>
@@ -499,23 +504,23 @@ export const Menu: React.FC<MenuProps> = ({
             >
               <button 
                 onClick={onShowLeaderboard}
-                className="w-full bg-zinc-800/80 hover:bg-zinc-700/80 py-5 px-12 rounded-sm text-2xl font-black tracking-widest uppercase border border-white/5 transition-all"
+                className="w-full bg-zinc-800/80 hover:bg-zinc-700/80 py-4 md:py-5 px-6 md:px-12 rounded-sm text-lg md:text-2xl font-black tracking-widest uppercase border border-white/5 transition-all"
               >
                 LEADERBOARDS
               </button>
 
-              <div className="flex gap-4">
+              <div className="flex flex-col sm:flex-row gap-4">
                 <button 
                   onClick={onShowHistory}
-                  className="flex-1 bg-zinc-800/80 hover:bg-zinc-700/80 py-5 px-12 rounded-sm text-2xl font-black tracking-widest uppercase border border-white/5 transition-all"
+                  className="flex-1 bg-zinc-800/80 hover:bg-zinc-700/80 py-4 md:py-5 px-6 md:px-12 rounded-sm text-lg md:text-2xl font-black tracking-widest uppercase border border-white/5 transition-all"
                 >
                   MATCH HISTORY
                 </button>
                 <button 
                   onClick={onShowSettings}
-                  className="bg-zinc-800/80 hover:bg-zinc-700/80 p-5 rounded-sm border border-white/5 transition-all"
+                  className="bg-zinc-800/80 hover:bg-zinc-700/80 p-4 md:p-5 rounded-sm border border-white/5 transition-all flex items-center justify-center"
                 >
-                  <SettingsIcon className="w-8 h-8 text-zinc-400" />
+                  <SettingsIcon className="w-6 h-6 md:w-8 md:h-8 text-zinc-400" />
                 </button>
               </div>
             </motion.div>

@@ -84,36 +84,36 @@ export const Settings: React.FC<SettingsProps> = ({ profile, onClose }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/95 backdrop-blur-md font-orbitron"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6 bg-black/95 backdrop-blur-md font-orbitron"
     >
       <motion.div 
         initial={{ scale: 0.9, opacity: 0, y: 20 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.9, opacity: 0, y: 20 }}
-        className="w-full max-w-lg bg-zinc-950 border border-white/5 rounded-sm overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] flex flex-col"
+        className="w-full max-w-lg bg-zinc-950 border border-white/5 rounded-sm overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] flex flex-col max-h-[90vh]"
       >
         {/* Header */}
-        <div className="p-10 border-b border-white/5 bg-gradient-to-r from-zinc-900/50 to-transparent flex items-center justify-between">
+        <div className="p-6 md:p-10 border-b border-white/5 bg-gradient-to-r from-zinc-900/50 to-transparent flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-red-500/10 rounded-sm flex items-center justify-center border border-red-500/20 shadow-[0_0_20px_rgba(220,38,38,0.1)]">
-              <SettingsIcon className="w-6 h-6 text-red-500" />
+            <div className="w-10 h-10 md:w-12 md:h-12 bg-red-500/10 rounded-sm flex items-center justify-center border border-red-500/20 shadow-[0_0_20px_rgba(220,38,38,0.1)]">
+              <SettingsIcon className="w-5 h-5 md:w-6 md:h-6 text-red-500" />
             </div>
             <div>
-              <h2 className="text-2xl font-black tracking-tighter text-white uppercase italic leading-none">SYSTEM <span className="text-red-500">CONFIG</span></h2>
-              <p className="text-zinc-500 text-[10px] font-black uppercase tracking-[0.3em] mt-1">Interface Parameters</p>
+              <h2 className="text-xl md:text-2xl font-black tracking-tighter text-white uppercase italic leading-none">SYSTEM <span className="text-red-500">CONFIG</span></h2>
+              <p className="text-zinc-500 text-[8px] md:text-[10px] font-black uppercase tracking-[0.3em] mt-1">Interface Parameters</p>
             </div>
           </div>
           <Button 
             variant="ghost" 
             size="sm" 
             onClick={onClose} 
-            className="p-3 rounded-sm bg-white/5 hover:bg-red-500/10 hover:text-red-500 transition-all border border-white/5"
+            className="p-2 md:p-3 rounded-sm bg-white/5 hover:bg-red-500/10 hover:text-red-500 transition-all border border-white/5"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4 md:w-5 md:h-5" />
           </Button>
         </div>
 
-        <div className="p-10 space-y-10">
+        <div className="p-6 md:p-10 space-y-8 md:space-y-10 overflow-y-auto custom-scrollbar">
           {/* Audio Settings */}
           <div className="space-y-6">
             <div className="flex items-center gap-3">
