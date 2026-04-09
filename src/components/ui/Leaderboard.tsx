@@ -33,7 +33,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ entries, sortBy, onSor
         <div className="flex flex-col lg:flex-row lg:items-center justify-between p-10 border-b border-white/5 bg-gradient-to-r from-zinc-900/50 to-transparent gap-8">
           <div className="flex items-center gap-6">
             <div>
-              <h2 className="text-4xl font-black tracking-tighter text-white uppercase italic leading-none">GLOBAL <span className="text-orange-500">RANKINGS</span></h2>
+              <h2 className="text-4xl font-black tracking-tighter text-white uppercase italic leading-none">GLOBAL <span className="text-red-500">RANKINGS</span></h2>
               <p className="text-zinc-500 text-[10px] font-black uppercase tracking-[0.4em] mt-2">The World's Most Lethal Players</p>
             </div>
           </div>
@@ -41,19 +41,19 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ entries, sortBy, onSor
           <div className="flex items-center gap-3 bg-white/5 p-2 rounded-sm border border-white/5">
             <button 
               onClick={() => onSortChange('elo')}
-              className={`px-6 py-3 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all ${sortBy === 'elo' ? 'bg-orange-600 text-white shadow-lg shadow-orange-600/20 italic' : 'text-zinc-500 hover:text-zinc-300'}`}
+              className={`px-6 py-3 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all ${sortBy === 'elo' ? 'bg-red-600 text-white shadow-lg shadow-red-600/20 italic' : 'text-zinc-500 hover:text-zinc-300'}`}
             >
               RATING (ELO)
             </button>
             <button 
               onClick={() => onSortChange('wins')}
-              className={`px-6 py-3 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all ${sortBy === 'wins' ? 'bg-orange-600 text-white shadow-lg shadow-orange-600/20 italic' : 'text-zinc-500 hover:text-zinc-300'}`}
+              className={`px-6 py-3 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all ${sortBy === 'wins' ? 'bg-red-600 text-white shadow-lg shadow-red-600/20 italic' : 'text-zinc-500 hover:text-zinc-300'}`}
             >
               ONLINE WINS
             </button>
             <button 
               onClick={() => onSortChange('botWins')}
-              className={`px-6 py-3 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all ${sortBy === 'botWins' ? 'bg-orange-600 text-white shadow-lg shadow-orange-600/20 italic' : 'text-zinc-500 hover:text-zinc-300'}`}
+              className={`px-6 py-3 rounded-sm text-[10px] font-black uppercase tracking-widest transition-all ${sortBy === 'botWins' ? 'bg-red-600 text-white shadow-lg shadow-red-600/20 italic' : 'text-zinc-500 hover:text-zinc-300'}`}
             >
               BOT WINS
             </button>
@@ -96,7 +96,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ entries, sortBy, onSor
                         "text-3xl font-black italic tracking-tighter",
                         index === 0 ? "text-yellow-500 drop-shadow-[0_0_15px_rgba(234,179,8,0.3)]" : 
                         index === 1 ? "text-zinc-400" : 
-                        index === 2 ? "text-orange-500" : "text-zinc-700"
+                        index === 2 ? "text-red-500" : "text-zinc-700"
                       )}>
                         #{index + 1}
                       </span>
@@ -109,7 +109,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ entries, sortBy, onSor
                             "w-4 h-4",
                             index === 0 ? "text-yellow-500" : 
                             index === 1 ? "text-zinc-400" : 
-                            index === 2 ? "text-orange-500" : "hidden"
+                            index === 2 ? "text-red-500" : "hidden"
                           )} />
                         </motion.div>
                       )}
@@ -121,7 +121,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ entries, sortBy, onSor
                         <img 
                           src={entry.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${entry.uid}`} 
                           alt="Avatar" 
-                          className="w-12 h-12 rounded-full border-2 border-white/10 p-1 bg-zinc-900 shadow-xl group-hover:border-orange-500/50 transition-all"
+                          className="w-12 h-12 rounded-full border-2 border-white/10 p-1 bg-zinc-900 shadow-xl group-hover:border-red-500/50 transition-all"
                         />
                         {index === 0 && (
                           <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center border-2 border-zinc-950 shadow-lg">
@@ -130,13 +130,13 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ entries, sortBy, onSor
                         )}
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-white font-black uppercase italic tracking-tight text-lg group-hover:text-orange-500 transition-colors">{entry.displayName}</span>
+                        <span className="text-white font-black uppercase italic tracking-tight text-lg group-hover:text-red-500 transition-colors">{entry.displayName}</span>
                       </div>
                     </div>
                   </td>
                   <td className="px-10 py-6">
                     <div className="flex items-center gap-2">
-                      <Flame className="w-4 h-4 text-orange-500" />
+                      <Flame className="w-4 h-4 text-red-500" />
                       <span className="text-2xl font-black text-white italic tracking-tighter">{entry.elo}</span>
                     </div>
                   </td>
@@ -158,7 +158,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ entries, sortBy, onSor
         {/* Footer */}
         <div className="p-8 bg-black/40 border-t border-white/5 text-center">
           <p className="text-zinc-600 text-[10px] font-black uppercase tracking-[0.5em]">
-            GRID SYNCHRONIZATION: <span className="text-orange-500 animate-pulse">ACTIVE</span>
+            GRID SYNCHRONIZATION: <span className="text-red-500 animate-pulse">ACTIVE</span>
           </p>
         </div>
       </motion.div>

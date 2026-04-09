@@ -17,6 +17,8 @@ interface MatchHistoryEntry {
   opponentScore: number;
   mode: string;
   timestamp: any;
+  previousElo?: number;
+  eloChange?: number;
 }
 
 interface ProfileProps {
@@ -31,6 +33,10 @@ export const Profile: React.FC<ProfileProps> = ({ profile, onClose, onUpdateUser
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [history, setHistory] = useState<MatchHistoryEntry[]>([]);
+
+  useEffect(() => {
+    setNewUsername(profile.username);
+  }, [profile.username]);
 
   const currentRank = RANKS[profile.rank];
   const nextRank = currentRank.nextRank ? RANKS[currentRank.nextRank] : null;
@@ -61,13 +67,13 @@ export const Profile: React.FC<ProfileProps> = ({ profile, onClose, onUpdateUser
 
     setLoading(true);
     setError(null);
-    try {
-      await onUpdateUsername(newUsername);
+    const result = await onUpdateUsername(newUsername);
+    setLoading(false);
+
+    if (result.success) {
       setIsEditing(false);
-    } catch (err: any) {
-      setError(err.message || 'Failed to update username');
-    } finally {
-      setLoading(false);
+    } else {
+      setError(result.error || 'Failed to update username');
     }
   };
 
@@ -87,11 +93,11 @@ export const Profile: React.FC<ProfileProps> = ({ profile, onClose, onUpdateUser
         {/* Header */}
         <div className="flex items-center justify-between p-10 border-b border-white/5 bg-gradient-to-r from-zinc-900/50 to-transparent">
           <div className="flex items-center gap-6">
-            <div className="w-16 h-16 bg-orange-500/10 rounded-sm flex items-center justify-center border border-orange-500/20 shadow-[0_0_30px_rgba(249,115,22,0.1)]">
-              <UserIcon className="w-8 h-8 text-orange-500" />
+            <div className="w-16 h-16 bg-red-500/10 rounded-sm flex items-center justify-center border border-red-500/20 shadow-[0_0_30px_rgba(220,38,38,0.1)]">
+              <UserIcon className="w-8 h-8 text-red-500" />
             </div>
             <div>
-              <h2 className="text-4xl font-black tracking-tighter text-white uppercase italic leading-none">PLAYER <span className="text-orange-500">DOSSIER</span></h2>
+              <h2 className="text-4xl font-black tracking-tighter text-white uppercase not-italic leading-none">PLAYER <span className="text-red-500">DOSSIER</span></h2>
               <p className="text-zinc-500 text-[10px] font-black uppercase tracking-[0.4em] mt-2">Combat Statistics & Metadata</p>
             </div>
           </div>
@@ -111,7 +117,7 @@ export const Profile: React.FC<ProfileProps> = ({ profile, onClose, onUpdateUser
           {/* Left: Avatar & Rank */}
           <div className="lg:col-span-4 flex flex-col items-center text-center space-y-8">
             <div className="relative group">
-              <div className="absolute inset-0 bg-orange-500/20 blur-[40px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="absolute inset-0 bg-red-500/20 blur-[40px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
               <img 
                 src={profile.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${profile.uid}`} 
                 alt="Avatar" 
@@ -131,7 +137,19 @@ export const Profile: React.FC<ProfileProps> = ({ profile, onClose, onUpdateUser
                 
                 <div className="flex items-center gap-3">
                   <AnimatePresence mode="wait">
-                    {isEditing ? (
+                    {profile.isGuest ? (
+                      <motion.div
+                        key="guest"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="flex flex-col items-center gap-2"
+                      >
+                        <p className="text-red-500 font-black uppercase tracking-[0.4em] text-[10px]">GUEST ACCOUNT</p>
+                        <p className="text-zinc-500 text-[8px] font-bold uppercase tracking-widest max-w-[200px]">
+                          Sign in to save your progress and play online!
+                        </p>
+                      </motion.div>
+                    ) : isEditing ? (
                       <motion.div 
                         key="edit"
                         initial={{ opacity: 0, y: 5 }}
@@ -143,10 +161,20 @@ export const Profile: React.FC<ProfileProps> = ({ profile, onClose, onUpdateUser
                           <input 
                             value={newUsername}
                             onChange={(e) => setNewUsername(e.target.value.replace(/[^a-zA-Z0-9_]/g, ''))}
-                            className="bg-zinc-900 border border-white/10 rounded-sm px-4 py-2 text-xs font-black text-orange-500 focus:outline-none focus:border-orange-500 w-40 tracking-widest uppercase"
+                            className={cn(
+                              "bg-zinc-900 border rounded-sm px-4 py-2 text-xs font-black text-red-500 focus:outline-none w-40 tracking-widest uppercase",
+                              error ? "border-red-500" : "border-white/10 focus:border-red-500"
+                            )}
                             placeholder="username"
                             autoFocus
+                            onKeyDown={(e) => e.key === 'Enter' && handleUpdateUsername()}
                           />
+                          {error && (
+                            <div className="absolute -bottom-5 left-0 flex items-center gap-1 text-red-500 text-[8px] font-black uppercase tracking-widest">
+                              <AlertCircle className="w-2.5 h-2.5" />
+                              {error}
+                            </div>
+                          )}
                         </div>
                         <Button 
                           onClick={handleUpdateUsername}
@@ -173,7 +201,7 @@ export const Profile: React.FC<ProfileProps> = ({ profile, onClose, onUpdateUser
                         exit={{ opacity: 0, y: -5 }}
                         className="flex items-center gap-3"
                       >
-                        <p className="text-orange-500 font-black uppercase tracking-[0.4em] text-xs">{profile.username}</p>
+                        <p className="text-red-500 font-black uppercase tracking-[0.4em] text-xs">{profile.username}</p>
                         <button 
                           onClick={() => setIsEditing(true)}
                           className="p-2 bg-white/5 rounded-sm border border-white/5 text-zinc-500 hover:text-white transition-all"
@@ -203,26 +231,26 @@ export const Profile: React.FC<ProfileProps> = ({ profile, onClose, onUpdateUser
             <div className="w-full space-y-3 text-left bg-white/5 p-6 rounded-sm border border-white/5">
               <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">
                 <span>RANK PROGRESSION</span>
-                <span className="text-orange-500">{nextRank ? `${nextRank.minElo - profile.elo} ELO TO ${nextRank.name}` : 'MAXIMUM RANK'}</span>
+                <span className="text-red-500">{nextRank ? `${nextRank.minElo - profile.elo} ELO TO ${nextRank.name}` : 'MAXIMUM RANK'}</span>
               </div>
               <div className="w-full h-3 bg-zinc-900 rounded-sm overflow-hidden p-0.5 border border-white/5">
                 <motion.div 
                   initial={{ width: 0 }}
                   animate={{ width: `${Math.min(100, Math.max(0, eloProgress))}%` }}
-                  className="h-full rounded-sm shadow-[0_0_15px_rgba(249,115,22,0.3)]"
+                  className="h-full rounded-sm shadow-[0_0_15px_rgba(239,68,68,0.3)]"
                   style={{ backgroundColor: currentRank.color }}
                 />
               </div>
             </div>
 
             <div className="w-full grid grid-cols-2 gap-4">
-              <div className="flex flex-col items-center justify-center p-6 bg-white/5 rounded-sm border border-white/5 group hover:border-orange-500/30 transition-all">
-                <Flame className="w-6 h-6 text-orange-500 mb-2 group-hover:scale-125 transition-transform" />
+              <div className="flex flex-col items-center justify-center p-6 bg-white/5 rounded-sm border border-white/5 group hover:border-red-500/30 transition-all">
+                <Flame className="w-6 h-6 text-red-500 mb-2 group-hover:scale-125 transition-transform" />
                 <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-1">STREAK</span>
                 <span className="text-white font-black text-2xl italic tracking-tighter">{profile.streak} 🔥</span>
               </div>
-              <div className="flex flex-col items-center justify-center p-6 bg-white/5 rounded-sm border border-white/5 group hover:border-orange-500/30 transition-all">
-                <Target className="w-6 h-6 text-orange-500 mb-2 group-hover:scale-125 transition-transform" />
+              <div className="flex flex-col items-center justify-center p-6 bg-white/5 rounded-sm border border-white/5 group hover:border-red-500/30 transition-all">
+                <Target className="w-6 h-6 text-red-500 mb-2 group-hover:scale-125 transition-transform" />
                 <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-1">FAV MOVE</span>
                 <span className="text-white font-black text-2xl italic tracking-tighter uppercase">{profile.favoriteMove || 'N/A'}</span>
               </div>
@@ -242,7 +270,7 @@ export const Profile: React.FC<ProfileProps> = ({ profile, onClose, onUpdateUser
               </div>
               <div className="p-8 bg-white/5 rounded-sm border border-white/5 hover:bg-white/10 transition-all">
                 <p className="text-zinc-500 text-[10px] font-black uppercase tracking-widest mb-3">WIN RATE</p>
-                <p className="text-5xl font-black text-orange-500 italic tracking-tighter">
+                <p className="text-5xl font-black text-red-500 italic tracking-tighter">
                   {profile.matchesPlayed > 0 ? Math.round((profile.wins / profile.matchesPlayed) * 100) : 0}%
                 </p>
               </div>
@@ -255,10 +283,7 @@ export const Profile: React.FC<ProfileProps> = ({ profile, onClose, onUpdateUser
             <div className="space-y-6">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-white/5 rounded-sm flex items-center justify-center border border-white/5">
-                    <History className="w-5 h-5 text-zinc-500" />
-                  </div>
-                  <h4 className="text-white font-black uppercase tracking-[0.3em] text-sm italic">COMBAT LOGS</h4>
+                  <h4 className="text-white font-black uppercase tracking-[0.3em] text-sm not-italic">COMBAT LOGS</h4>
                 </div>
                 <div className="h-px flex-1 bg-white/5 mx-6" />
               </div>
@@ -287,7 +312,7 @@ export const Profile: React.FC<ProfileProps> = ({ profile, onClose, onUpdateUser
                               entry.result === 'win' ? "text-green-500 border-green-500/20 bg-green-500/5" : 
                               entry.result === 'loss' ? "text-red-500 border-red-500/20 bg-red-500/5" : "text-zinc-500 border-white/5 bg-white/5"
                             )}>
-                              {entry.result === 'win' ? 'WIN' : entry.result === 'loss' ? 'LOSS' : 'DRAW'}
+                              {entry.result === 'win' ? 'W' : entry.result === 'loss' ? 'L' : 'D'}
                             </span>
                           </div>
                           <span className="text-zinc-500 text-[8px] font-black uppercase tracking-[0.2em] mt-1">
@@ -295,6 +320,17 @@ export const Profile: React.FC<ProfileProps> = ({ profile, onClose, onUpdateUser
                           </span>
                         </div>
                       </div>
+                      {entry.previousElo !== undefined && (
+                        <div className="flex items-center gap-1.5 text-right">
+                          <span className="text-[10px] text-zinc-500 opacity-50">{entry.previousElo}</span>
+                          <span className={cn(
+                            "text-[10px] font-black italic",
+                            entry.eloChange >= 0 ? "text-green-500" : "text-red-500"
+                          )}>
+                            {entry.eloChange >= 0 ? '+' : ''}{entry.eloChange}
+                          </span>
+                        </div>
+                      )}
                     </motion.div>
                   ))
                 ) : (

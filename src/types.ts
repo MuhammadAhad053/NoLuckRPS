@@ -1,7 +1,7 @@
 export type Move = 'rock' | 'paper' | 'scissors' | null;
 export type GameResult = 'win' | 'loss' | 'draw' | null;
 export type GameMode = 'single' | 'multi-ranked' | 'multi-private' | null;
-export type Rank = 'Plastic' | 'Bronze' | 'Silver' | 'Gold' | 'Platinum' | 'Diamond' | 'Master' | 'Grandmaster' | 'Champion';
+export type Rank = 'Plastic' | 'Bronze' | 'Silver' | 'Gold' | 'Platinum' | 'Diamond' | 'Champion';
 
 export interface UserProfile {
   uid: string;

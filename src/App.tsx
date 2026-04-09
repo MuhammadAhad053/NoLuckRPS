@@ -9,7 +9,9 @@ import { GameOverlay } from './components/ui/GameOverlay';
 import { Leaderboard } from './components/ui/Leaderboard';
 import { MatchHistory } from './components/ui/MatchHistory';
 import { Matchmaking } from './components/ui/Matchmaking';
+import { Profile } from './components/ui/Profile';
 import { CookieConsent } from './components/ui/CookieConsent';
+import { Logo } from './components/ui/Logo';
 import { useAuth } from './hooks/useAuth';
 import { useGame } from './hooks/useGame';
 import { useLeaderboard } from './hooks/useLeaderboard';
@@ -19,12 +21,10 @@ export default function App() {
   const { 
     profile, 
     loading: authLoading, 
-    loginAsGuest, 
-    loginWithEmail, 
-    signUpWithEmail, 
-    linkGuestToAccount,
-    updateUsername,
-    logout
+    loginWithGoogle,
+    loginAsGuest,
+    logout,
+    updateUsername
   } = useAuth();
 
   const { 
@@ -63,9 +63,7 @@ export default function App() {
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [showLinkAccount, setShowLinkAccount] = useState(false);
-  const [showEmailLogin, setShowEmailLogin] = useState(false);
-  const [showEmailSignUp, setShowEmailSignUp] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
 
   if (authLoading) {
     return (
@@ -77,12 +75,7 @@ export default function App() {
             className="relative flex flex-col items-center"
           >
             <div className="relative w-48 h-48 flex items-center justify-center mb-12">
-              <img 
-                src="/logo.svg"
-                alt="NoLuckRPS Logo"
-                className="w-full h-full object-contain relative z-10 drop-shadow-[0_0_30px_rgba(249,115,22,0.6)]"
-                referrerPolicy="no-referrer"
-              />
+              <Logo size={200} />
             </div>
             
             <div className="text-center">
@@ -95,7 +88,7 @@ export default function App() {
                     initial={{ x: "-100%" }}
                     animate={{ x: "100%" }}
                     transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-                    className="w-full h-full bg-gradient-to-r from-transparent via-orange-500 to-transparent"
+                    className="w-full h-full bg-gradient-to-r from-transparent via-red-500 to-transparent"
                   />
                 </div>
                 <p className="text-zinc-500 font-bold tracking-[0.4em] uppercase text-[8px] animate-pulse">
@@ -115,9 +108,8 @@ export default function App() {
         {!profile ? (
           <Login 
             key="login" 
-            onGuestLogin={loginAsGuest} 
-            onEmailLogin={loginWithEmail}
-            onEmailSignUp={signUpWithEmail}
+            onGoogleLogin={loginWithGoogle}
+            onGuestLogin={loginAsGuest}
           />
         ) : mode ? (
           <div key="game" className="relative w-full h-screen">
@@ -149,14 +141,14 @@ export default function App() {
             onSelectMode={setMode}
             onShowLeaderboard={() => setShowLeaderboard(true)}
             onShowHistory={() => setShowHistory(true)}
-            onShowLinkAccount={() => setShowLinkAccount(true)}
             onShowSettings={() => setShowSettings(true)}
+            onShowProfile={() => setShowProfile(true)}
             onStartMatchmaking={startMatchmaking}
             onCreatePrivateMatch={createPrivateMatch}
             onJoinPrivateMatch={joinPrivateMatch}
             onJoinMatch={joinMatchById}
-            onUpdateUsername={updateUsername}
             onLogout={logout}
+            onUpdateUsername={updateUsername}
           />
         )}
       </AnimatePresence>
@@ -192,21 +184,17 @@ export default function App() {
         {showSettings && (
           <Settings 
             key="settings"
+            profile={profile}
             onClose={() => setShowSettings(false)}
           />
         )}
-        {showLinkAccount && (
-          <div className="fixed inset-0 z-[60] flex items-center justify-center p-6 bg-black/90 backdrop-blur-2xl">
-            <div className="w-full max-w-md">
-              <Login 
-                onGuestLogin={async () => {}} 
-                onEmailLogin={async () => {}}
-                onEmailSignUp={linkGuestToAccount}
-                isLinking={true}
-                onClose={() => setShowLinkAccount(false)}
-              />
-            </div>
-          </div>
+        {showProfile && profile && (
+          <Profile 
+            key="profile"
+            profile={profile}
+            onClose={() => setShowProfile(false)}
+            onUpdateUsername={updateUsername}
+          />
         )}
       </AnimatePresence>
 

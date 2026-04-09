@@ -79,7 +79,7 @@ export const Social: React.FC<SocialProps> = ({ profile, onClose }) => {
               onClick={() => setActiveTab('friends')}
               className={cn(
                 "p-3 rounded-sm border border-white/5 transition-all",
-                activeTab === 'friends' ? "bg-orange-500/20 text-orange-500 border-orange-500/30" : "bg-white/5 text-zinc-500 hover:text-white"
+                activeTab === 'friends' ? "bg-red-500/20 text-red-500 border-red-500/30" : "bg-white/5 text-zinc-500 hover:text-white"
               )}
             >
               <Users className="w-5 h-5" />
@@ -90,7 +90,7 @@ export const Social: React.FC<SocialProps> = ({ profile, onClose }) => {
               onClick={() => setActiveTab('search')}
               className={cn(
                 "p-3 rounded-sm border border-white/5 transition-all",
-                activeTab === 'search' ? "bg-orange-500/20 text-orange-500 border-orange-500/30" : "bg-white/5 text-zinc-500 hover:text-white"
+                activeTab === 'search' ? "bg-red-500/20 text-red-500 border-red-500/30" : "bg-white/5 text-zinc-500 hover:text-white"
               )}
             >
               <UserPlus className="w-5 h-5" />
@@ -98,7 +98,7 @@ export const Social: React.FC<SocialProps> = ({ profile, onClose }) => {
           </div>
 
           <div className="text-center">
-            <h2 className="text-2xl font-black tracking-tighter text-white uppercase italic leading-none">SOCIAL <span className="text-orange-500">HUB</span></h2>
+            <h2 className="text-2xl font-black tracking-tighter text-white uppercase italic leading-none">SOCIAL <span className="text-red-500">HUB</span></h2>
             <p className="text-zinc-500 text-[8px] font-black uppercase tracking-[0.3em] mt-1">Grid Network</p>
           </div>
 
@@ -110,7 +110,7 @@ export const Social: React.FC<SocialProps> = ({ profile, onClose }) => {
                 onClick={() => setActiveTab('requests')}
                 className={cn(
                   "p-3 rounded-sm border border-white/5 transition-all",
-                  activeTab === 'requests' ? "bg-orange-500/20 text-orange-500 border-orange-500/30" : "bg-white/5 text-zinc-500 hover:text-white"
+                  activeTab === 'requests' ? "bg-red-500/20 text-red-500 border-red-500/30" : "bg-white/5 text-zinc-500 hover:text-white"
                 )}
               >
                 <Bell className="w-5 h-5" />
@@ -145,7 +145,7 @@ export const Social: React.FC<SocialProps> = ({ profile, onClose }) => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="SEARCH USERNAME..."
-                  className="w-full bg-zinc-900 border border-white/5 rounded-sm pl-12 pr-6 py-3 text-[10px] font-black text-white focus:outline-none focus:border-orange-500/50 transition-all placeholder:text-zinc-700 tracking-widest uppercase"
+                  className="w-full bg-zinc-900 border border-white/5 rounded-sm pl-12 pr-6 py-3 text-[10px] font-black text-white focus:outline-none focus:border-red-500/50 transition-all placeholder:text-zinc-700 tracking-widest uppercase"
                   autoFocus
                 />
               </form>
@@ -220,7 +220,7 @@ export const Social: React.FC<SocialProps> = ({ profile, onClose }) => {
               >
                 {loading ? (
                   <div className="flex justify-center py-20">
-                    <div className="w-12 h-12 border-4 border-orange-500/10 border-t-orange-500 rounded-full animate-spin shadow-[0_0_20px_rgba(249,115,22,0.2)]" />
+                    <div className="w-12 h-12 border-4 border-red-500/10 border-t-red-500 rounded-full animate-spin shadow-[0_0_20px_rgba(220,38,38,0.2)]" />
                   </div>
                 ) : searchResults.length === 0 ? (
                   <div className="text-center py-20 space-y-4">
@@ -270,15 +270,15 @@ const RequestCard = ({ request, onAccept, onReject }: { request: FriendRequest, 
         <img 
           src={request.fromPhotoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${request.fromUid}`} 
           alt="Avatar" 
-          className="w-14 h-14 rounded-sm border-2 border-orange-500/30 p-1 bg-zinc-900 shadow-xl"
+          className="w-14 h-14 rounded-sm border-2 border-red-500/30 p-1 bg-zinc-900 shadow-xl"
         />
-        <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-orange-500 rounded-full flex items-center justify-center border-2 border-zinc-950">
+        <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center border-2 border-zinc-950">
           <Bell className="w-2.5 h-2.5 text-black" />
         </div>
       </div>
       <div>
         <h4 className="text-sm font-black text-white uppercase italic tracking-tight">{request.fromDisplayName}</h4>
-        <p className="text-[10px] text-orange-500 font-black uppercase tracking-[0.2em] mt-1">@{request.fromUsername}</p>
+        <p className="text-[10px] text-red-500 font-black uppercase tracking-[0.2em] mt-1">@{request.fromUsername}</p>
       </div>
     </div>
     <div className="flex items-center gap-3">
@@ -336,7 +336,7 @@ const UserCard = ({
         <div>
           <div className="flex items-center gap-3">
             <h4 className="text-sm font-black text-white uppercase italic tracking-tight">{user.displayName}</h4>
-            <span className="text-[10px] text-orange-500 font-black uppercase tracking-[0.2em]">@{user.username}</span>
+            <span className="text-[10px] text-red-500 font-black uppercase tracking-[0.2em]">@{user.username}</span>
           </div>
           <div className="flex items-center gap-4 mt-2">
             <div className="flex items-center gap-1.5 text-zinc-500">
@@ -362,7 +362,7 @@ const UserCard = ({
               ? 'text-red-500 hover:bg-red-500/10 border border-red-500/20' 
               : isPending 
                 ? 'text-zinc-500 bg-zinc-900 border border-white/5' 
-                : 'bg-orange-600 hover:bg-orange-700 border-none text-white shadow-lg shadow-orange-900/20'
+                : 'bg-red-600 hover:bg-red-700 border-none text-white shadow-lg shadow-red-900/20'
           } ${user.isGuest ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
           {isFriend ? <UserMinus className="w-5 h-5" /> : isIncoming ? <UserCheck className="w-5 h-5" /> : isPending ? <Check className="w-5 h-5" /> : <UserPlus className="w-5 h-5" />}

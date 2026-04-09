@@ -56,9 +56,9 @@ export const Matchmaking: React.FC<MatchmakingProps> = ({ profile, onCancel, sta
     >
       {/* Dynamic Background Effects */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[100%] h-[100%] bg-orange-600/5 blur-[200px] rounded-full animate-pulse" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[100%] h-[100%] bg-red-600/5 blur-[200px] rounded-full animate-pulse" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full opacity-10">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-orange-500/20 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-red-500/20 via-transparent to-transparent" />
         </div>
       </div>
 
@@ -74,11 +74,11 @@ export const Matchmaking: React.FC<MatchmakingProps> = ({ profile, onCancel, sta
             >
               {/* Searching Animation */}
               <div className="relative">
-                <div className="w-56 h-56 rounded-full border-4 border-orange-500/10 flex items-center justify-center">
+                <div className="w-56 h-56 rounded-full border-4 border-red-500/10 flex items-center justify-center">
                   <motion.div 
                     animate={{ rotate: 360 }}
                     transition={{ repeat: Infinity, duration: 3, ease: "linear" }}
-                    className="absolute inset-0 rounded-full border-4 border-t-orange-500 shadow-[0_0_20px_rgba(249,115,22,0.3)]"
+                    className="absolute inset-0 rounded-full border-4 border-t-red-500 shadow-[0_0_20px_rgba(220,38,38,0.3)]"
                   />
                   <motion.div 
                     animate={{ rotate: -360 }}
@@ -103,7 +103,7 @@ export const Matchmaking: React.FC<MatchmakingProps> = ({ profile, onCancel, sta
               <div className="text-center space-y-6">
                 <div className="space-y-2">
                   <h2 className="text-6xl font-black tracking-tighter text-white uppercase italic">
-                    {partyCode ? 'WAITING FOR' : 'SEARCHING FOR'} <span className="text-orange-500">{partyCode ? 'FRIEND' : 'OPPONENT'}</span>
+                    {partyCode ? 'WAITING FOR' : 'SEARCHING FOR'} <span className="text-red-500">{partyCode ? 'FRIEND' : 'OPPONENT'}</span>
                   </h2>
                   <p className="text-zinc-500 font-bold tracking-[0.4em] uppercase text-[10px] animate-pulse">
                     Tactical Protocol Active
@@ -115,7 +115,7 @@ export const Matchmaking: React.FC<MatchmakingProps> = ({ profile, onCancel, sta
                     <p className="text-zinc-500 text-[10px] font-black uppercase tracking-[0.3em]">Share Party Code</p>
                     <div 
                       onClick={copyCode}
-                      className="group relative flex items-center gap-6 bg-zinc-900/50 border border-white/5 px-10 py-5 rounded-3xl cursor-pointer hover:bg-zinc-900 transition-all hover:border-orange-500/30"
+                      className="group relative flex items-center gap-6 bg-zinc-900/50 border border-white/5 px-10 py-5 rounded-3xl cursor-pointer hover:bg-zinc-900 transition-all hover:border-red-500/30"
                     >
                       <span className="text-5xl font-black tracking-[0.4em] text-white font-mono">{partyCode}</span>
                       {copied ? <Check className="w-8 h-8 text-green-500" /> : <Copy className="w-8 h-8 text-zinc-500 group-hover:text-white" />}
@@ -145,7 +145,7 @@ export const Matchmaking: React.FC<MatchmakingProps> = ({ profile, onCancel, sta
                       <div className="w-px h-12 bg-white/10" />
                       <div className="flex flex-col items-center">
                         <p className="text-zinc-500 text-[10px] font-black uppercase tracking-widest mb-2">ELO Range</p>
-                        <p className="text-3xl font-black text-orange-500 font-mono italic">±100</p>
+                        <p className="text-3xl font-black text-red-500 font-mono italic">±100</p>
                       </div>
                     </>
                   )}
@@ -181,7 +181,7 @@ export const Matchmaking: React.FC<MatchmakingProps> = ({ profile, onCancel, sta
                     <motion.div 
                       animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.4, 0.2] }}
                       transition={{ repeat: Infinity, duration: 2 }}
-                      className="absolute inset-0 bg-orange-500 blur-3xl rounded-full"
+                      className="absolute inset-0 bg-red-500 blur-3xl rounded-full"
                     />
                     <img 
                       src={profile.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${profile.uid}`} 
@@ -198,7 +198,7 @@ export const Matchmaking: React.FC<MatchmakingProps> = ({ profile, onCancel, sta
                   </div>
                   <div className="text-center relative z-10">
                     <p className="text-white font-black text-3xl uppercase italic tracking-tighter">{profile.displayName}</p>
-                    <p className="text-orange-500 text-[10px] font-black uppercase tracking-[0.3em] mt-2">{profile.username}</p>
+                    <p className="text-red-500 text-[10px] font-black uppercase tracking-[0.3em] mt-2">{profile.username}</p>
                   </div>
                 </motion.div>
 
@@ -218,7 +218,7 @@ export const Matchmaking: React.FC<MatchmakingProps> = ({ profile, onCancel, sta
                     transition={{ delay: 0.6, type: 'spring' }}
                     className="absolute inset-0 flex items-center justify-center"
                   >
-                    <Zap className="w-24 h-24 text-orange-500 fill-orange-500 drop-shadow-[0_0_40px_rgba(249,115,22,0.8)]" />
+                    <Zap className="w-24 h-24 text-red-500 fill-red-500 drop-shadow-[0_0_40px_rgba(220,38,38,0.8)]" />
                   </motion.div>
                 </div>
 
@@ -266,9 +266,9 @@ export const Matchmaking: React.FC<MatchmakingProps> = ({ profile, onCancel, sta
               >
                 <h3 className="text-6xl font-black text-white uppercase italic tracking-tighter drop-shadow-[0_0_30px_rgba(255,255,255,0.1)]">MATCH ESTABLISHED</h3>
                 <div className="flex items-center justify-center gap-4">
-                  <div className="h-px w-12 bg-orange-500/50" />
-                  <p className="text-orange-500 text-[10px] font-black uppercase tracking-[0.5em] animate-pulse">Synchronizing Arena Parameters</p>
-                  <div className="h-px w-12 bg-orange-500/50" />
+                  <div className="h-px w-12 bg-red-500/50" />
+                  <p className="text-red-500 text-[10px] font-black uppercase tracking-[0.5em] animate-pulse">Synchronizing Arena Parameters</p>
+                  <div className="h-px w-12 bg-red-500/50" />
                 </div>
               </motion.div>
             </motion.div>

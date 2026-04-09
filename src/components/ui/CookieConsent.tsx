@@ -51,12 +51,12 @@ export const CookieConsent: React.FC<CookieConsentProps> = ({ onAccept }) => {
           className="w-full max-w-2xl bg-zinc-950 border border-white/5 rounded-[3rem] p-12 shadow-[0_0_50px_rgba(0,0,0,0.5)]"
         >
           <div className="flex flex-col items-center text-center gap-10">
-            <div className="w-24 h-24 bg-orange-500/10 rounded-[2rem] flex items-center justify-center border border-orange-500/20 shadow-[0_0_30px_rgba(249,115,22,0.1)]">
-              <Cookie className="w-12 h-12 text-orange-500" />
+            <div className="w-24 h-24 bg-red-500/10 rounded-[2rem] flex items-center justify-center border border-red-500/20 shadow-[0_0_30px_rgba(220,38,38,0.1)]">
+              <Cookie className="w-12 h-12 text-red-500" />
             </div>
             <div className="space-y-8 w-full">
               <div>
-                <h2 className="text-4xl font-black text-white uppercase italic tracking-tighter">COOKIE <span className="text-orange-500">PROTOCOLS</span></h2>
+                <h2 className="text-4xl font-black text-white uppercase italic tracking-tighter">COOKIE <span className="text-red-500">PROTOCOLS</span></h2>
                 <p className="text-zinc-500 text-[10px] font-black uppercase tracking-[0.3em] mt-4 max-w-md mx-auto leading-relaxed">
                   To continue to NoLuckRPS, please review our interface parameters. Some protocols are essential for system stability and account persistence.
                 </p>
@@ -71,7 +71,7 @@ export const CookieConsent: React.FC<CookieConsentProps> = ({ onAccept }) => {
                       <p className="text-[9px] text-zinc-500 font-black uppercase tracking-widest mt-1">Session & Auth</p>
                     </div>
                   </div>
-                  <div className="w-10 h-6 bg-orange-600/50 rounded-full flex items-center px-1 opacity-50 cursor-not-allowed">
+                  <div className="w-10 h-6 bg-red-600/50 rounded-full flex items-center px-1 opacity-50 cursor-not-allowed">
                     <div className="w-4 h-4 bg-white rounded-full translate-x-4" />
                   </div>
                 </div>
@@ -81,13 +81,13 @@ export const CookieConsent: React.FC<CookieConsentProps> = ({ onAccept }) => {
                   onClick={() => setPreferences(prev => ({ ...prev, analytics: !prev.analytics }))}
                 >
                   <div className="flex items-center gap-4">
-                    <Info className="w-5 h-5 text-orange-500" />
+                    <Info className="w-5 h-5 text-red-500" />
                     <div>
                       <p className="text-[10px] font-black text-white uppercase tracking-widest">Analytics</p>
                       <p className="text-[9px] text-zinc-500 font-black uppercase tracking-widest mt-1">Game Stats</p>
                     </div>
                   </div>
-                  <div className={`w-10 h-6 rounded-full flex items-center px-1 transition-all ${preferences.analytics ? 'bg-orange-600' : 'bg-zinc-800'}`}>
+                  <div className={`w-10 h-6 rounded-full flex items-center px-1 transition-all ${preferences.analytics ? 'bg-red-600' : 'bg-zinc-800'}`}>
                     <motion.div 
                       animate={{ x: preferences.analytics ? 16 : 0 }}
                       className="w-4 h-4 bg-white rounded-full shadow-lg" 
@@ -106,7 +106,7 @@ export const CookieConsent: React.FC<CookieConsentProps> = ({ onAccept }) => {
                       <p className="text-[9px] text-zinc-500 font-black uppercase tracking-widest mt-1">Asset Loading</p>
                     </div>
                   </div>
-                  <div className={`w-10 h-6 rounded-full flex items-center px-1 transition-all ${preferences.performance ? 'bg-orange-600' : 'bg-zinc-800'}`}>
+                  <div className={`w-10 h-6 rounded-full flex items-center px-1 transition-all ${preferences.performance ? 'bg-red-600' : 'bg-zinc-800'}`}>
                     <motion.div 
                       animate={{ x: preferences.performance ? 16 : 0 }}
                       className="w-4 h-4 bg-white rounded-full shadow-lg" 
@@ -125,7 +125,7 @@ export const CookieConsent: React.FC<CookieConsentProps> = ({ onAccept }) => {
                       <p className="text-[9px] text-zinc-500 font-black uppercase tracking-widest mt-1">Promotions</p>
                     </div>
                   </div>
-                  <div className={`w-10 h-6 rounded-full flex items-center px-1 transition-all ${preferences.marketing ? 'bg-orange-600' : 'bg-zinc-800'}`}>
+                  <div className={`w-10 h-6 rounded-full flex items-center px-1 transition-all ${preferences.marketing ? 'bg-red-600' : 'bg-zinc-800'}`}>
                     <motion.div 
                       animate={{ x: preferences.marketing ? 16 : 0 }}
                       className="w-4 h-4 bg-white rounded-full shadow-lg" 
@@ -145,7 +145,7 @@ export const CookieConsent: React.FC<CookieConsentProps> = ({ onAccept }) => {
                 <Button 
                   onClick={handleAcceptAll}
                   variant="primary" 
-                  className="flex-1 py-6 text-[10px] font-black uppercase tracking-[0.3em] bg-orange-600 hover:bg-orange-700 border-none italic rounded-3xl shadow-xl shadow-orange-900/20"
+                  className="flex-1 py-6 text-[10px] font-black uppercase tracking-[0.3em] bg-red-600 hover:bg-red-700 border-none italic rounded-3xl shadow-xl shadow-red-900/20"
                 >
                   ACCEPT ALL
                 </Button>

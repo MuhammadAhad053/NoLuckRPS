@@ -64,7 +64,7 @@ export function useGame(profile: UserProfile | null) {
   }, [history]);
 
   const updateStats = useCallback(async (finalResult: GameResult, oppName?: string, finalPlayerScore?: number, finalOpponentScore?: number) => {
-    if (!profile || profile.uid.startsWith('guest-') || profile.isGuest) return;
+    if (!profile) return;
 
     const profileRef = doc(db, 'users', profile.uid);
     let eloChange = 0;
@@ -120,6 +120,8 @@ export function useGame(profile: UserProfile | null) {
         playerScore: finalPlayerScore !== undefined ? finalPlayerScore : playerScore,
         opponentScore: finalOpponentScore !== undefined ? finalOpponentScore : opponentScore,
         mode: mode,
+        previousElo: profile.elo,
+        eloChange: eloChange,
         timestamp: serverTimestamp(),
       });
     } catch (error) {

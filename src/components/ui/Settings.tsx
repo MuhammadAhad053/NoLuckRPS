@@ -1,15 +1,83 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { X, Volume2, VolumeX, Shield, Info, Github, Settings as SettingsIcon } from 'lucide-react';
+import { X, Volume2, VolumeX, Shield, Info, Github, Settings as SettingsIcon, Database, Trash2, RefreshCw, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { Button } from './Button';
 import { useAudio } from '../../hooks/useAudio';
+import { UserProfile } from '../../types';
+import { db } from '../../firebase';
+import { collection, getDocs, writeBatch, doc, query, limit } from 'firebase/firestore';
 
 interface SettingsProps {
+  profile: UserProfile | null;
   onClose: () => void;
 }
 
-export const Settings: React.FC<SettingsProps> = ({ onClose }) => {
+export const Settings: React.FC<SettingsProps> = ({ profile, onClose }) => {
   const { isMuted, toggleMute } = useAudio();
+  const [isAdminMode, setIsAdminMode] = useState(false);
+  const [adminStatus, setAdminStatus] = useState<{ type: 'idle' | 'loading' | 'success' | 'error', message: string }>({ type: 'idle', message: '' });
+
+  const isAdmin = profile?.email === 'ahadmuhammad053@gmail.com';
+
+  const resetAllRanks = async () => {
+    if (!confirm('Are you absolutely sure? This will reset ELO and Rank for ALL users in the database.')) return;
+    
+    setAdminStatus({ type: 'loading', message: 'Initializing global rank reset...' });
+    try {
+      const usersSnap = await getDocs(collection(db, 'users'));
+      const batch = writeBatch(db);
+      let count = 0;
+
+      usersSnap.forEach((userDoc) => {
+        batch.update(userDoc.ref, {
+          elo: 1000,
+          rank: 'Plastic',
+          wins: 0,
+          losses: 0,
+          draws: 0,
+          streak: 0,
+          matchesPlayed: 0,
+          botWins: 0,
+          botLosses: 0,
+          botDraws: 0,
+          moveStats: { rock: 0, paper: 0, scissors: 0 },
+          favoriteMove: null
+        });
+        count++;
+      });
+
+      await batch.commit();
+      setAdminStatus({ type: 'success', message: `Successfully reset ${count} user profiles.` });
+    } catch (error: any) {
+      setAdminStatus({ type: 'error', message: `Reset failed: ${error.message}` });
+    }
+  };
+
+  const clearAllMatchHistories = async () => {
+    if (!confirm('Are you absolutely sure? This will delete ALL match history records for ALL users.')) return;
+
+    setAdminStatus({ type: 'loading', message: 'Scanning database for history records...' });
+    try {
+      const usersSnap = await getDocs(collection(db, 'users'));
+      let totalDeleted = 0;
+
+      for (const userDoc of usersSnap.docs) {
+        const historySnap = await getDocs(collection(db, 'users', userDoc.id, 'history'));
+        if (historySnap.empty) continue;
+
+        const batch = writeBatch(db);
+        historySnap.forEach((historyDoc) => {
+          batch.delete(historyDoc.ref);
+          totalDeleted++;
+        });
+        await batch.commit();
+      }
+
+      setAdminStatus({ type: 'success', message: `Successfully purged ${totalDeleted} match history records.` });
+    } catch (error: any) {
+      setAdminStatus({ type: 'error', message: `Purge failed: ${error.message}` });
+    }
+  };
 
   return (
     <motion.div 
@@ -27,11 +95,11 @@ export const Settings: React.FC<SettingsProps> = ({ onClose }) => {
         {/* Header */}
         <div className="p-10 border-b border-white/5 bg-gradient-to-r from-zinc-900/50 to-transparent flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-orange-500/10 rounded-sm flex items-center justify-center border border-orange-500/20 shadow-[0_0_20px_rgba(249,115,22,0.1)]">
-              <SettingsIcon className="w-6 h-6 text-orange-500" />
+            <div className="w-12 h-12 bg-red-500/10 rounded-sm flex items-center justify-center border border-red-500/20 shadow-[0_0_20px_rgba(220,38,38,0.1)]">
+              <SettingsIcon className="w-6 h-6 text-red-500" />
             </div>
             <div>
-              <h2 className="text-2xl font-black tracking-tighter text-white uppercase italic leading-none">SYSTEM <span className="text-orange-500">CONFIG</span></h2>
+              <h2 className="text-2xl font-black tracking-tighter text-white uppercase italic leading-none">SYSTEM <span className="text-red-500">CONFIG</span></h2>
               <p className="text-zinc-500 text-[10px] font-black uppercase tracking-[0.3em] mt-1">Interface Parameters</p>
             </div>
           </div>
@@ -55,8 +123,8 @@ export const Settings: React.FC<SettingsProps> = ({ onClose }) => {
             </div>
             <div className="flex items-center justify-between p-6 bg-white/5 rounded-sm border border-white/5 hover:bg-white/10 transition-all group">
               <div className="flex items-center gap-6">
-                <div className="w-14 h-14 bg-zinc-900 rounded-sm flex items-center justify-center border border-white/5 shadow-xl group-hover:border-orange-500/30 transition-all">
-                  {isMuted ? <VolumeX className="w-6 h-6 text-red-500" /> : <Volume2 className="w-6 h-6 text-orange-500" />}
+                <div className="w-14 h-14 bg-zinc-900 rounded-sm flex items-center justify-center border border-white/5 shadow-xl group-hover:border-red-500/30 transition-all">
+                  {isMuted ? <VolumeX className="w-6 h-6 text-red-500" /> : <Volume2 className="w-6 h-6 text-red-500" />}
                 </div>
                 <div>
                   <p className="text-sm font-black text-white uppercase italic tracking-tight">GAME SONICS</p>
@@ -67,12 +135,69 @@ export const Settings: React.FC<SettingsProps> = ({ onClose }) => {
                 onClick={toggleMute}
                 variant={isMuted ? "secondary" : "primary"}
                 size="sm"
-                className={`px-8 py-3 rounded-sm font-black uppercase tracking-widest text-[10px] italic ${isMuted ? 'bg-zinc-800 text-white border-white/10' : 'bg-orange-600 hover:bg-orange-700 border-none text-white shadow-lg shadow-orange-900/20'}`}
+                className={`px-8 py-3 rounded-sm font-black uppercase tracking-widest text-[10px] italic ${isMuted ? 'bg-zinc-800 text-white border-white/10' : 'bg-red-600 hover:bg-red-700 border-none text-white shadow-lg shadow-red-900/20'}`}
               >
                 {isMuted ? "RE-ACTIVATE" : "TERMINATE"}
               </Button>
             </div>
           </div>
+
+          {/* Admin Tools - Only for specific email */}
+          {isAdmin && (
+            <div className="space-y-6">
+              <div className="flex items-center gap-3">
+                <div className="h-px flex-1 bg-red-500/20" />
+                <h3 className="text-[10px] font-black uppercase tracking-[0.5em] text-red-500">ADMIN PROTOCOLS</h3>
+                <div className="h-px flex-1 bg-red-500/20" />
+              </div>
+              
+              <div className="p-6 bg-red-500/5 rounded-sm border border-red-500/10 space-y-6">
+                <div className="flex items-center gap-4 text-red-500 mb-2">
+                  <Database className="w-5 h-5" />
+                  <p className="text-[10px] font-black uppercase tracking-widest">Global Database Management</p>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4">
+                  <Button 
+                    onClick={resetAllRanks}
+                    disabled={adminStatus.type === 'loading'}
+                    className="w-full flex items-center justify-center gap-3 py-4 bg-red-950/30 border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white transition-all text-[10px] font-black uppercase tracking-widest rounded-sm"
+                  >
+                    <RefreshCw className={`w-4 h-4 ${adminStatus.type === 'loading' ? 'animate-spin' : ''}`} />
+                    RESET ALL USER RANKS
+                  </Button>
+
+                  <Button 
+                    onClick={clearAllMatchHistories}
+                    disabled={adminStatus.type === 'loading'}
+                    className="w-full flex items-center justify-center gap-3 py-4 bg-red-950/30 border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white transition-all text-[10px] font-black uppercase tracking-widest rounded-sm"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    PURGE ALL MATCH HISTORIES
+                  </Button>
+                </div>
+
+                {adminStatus.type !== 'idle' && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className={`p-4 rounded-sm flex items-start gap-3 border ${
+                      adminStatus.type === 'loading' ? 'bg-blue-500/10 border-blue-500/20 text-blue-400' :
+                      adminStatus.type === 'success' ? 'bg-green-500/10 border-green-500/20 text-green-400' :
+                      'bg-red-500/10 border-red-500/20 text-red-400'
+                    }`}
+                  >
+                    {adminStatus.type === 'loading' && <RefreshCw className="w-4 h-4 animate-spin mt-0.5" />}
+                    {adminStatus.type === 'success' && <CheckCircle2 className="w-4 h-4 mt-0.5" />}
+                    {adminStatus.type === 'error' && <AlertCircle className="w-4 h-4 mt-0.5" />}
+                    <p className="text-[10px] font-bold uppercase tracking-wider leading-relaxed">
+                      {adminStatus.message}
+                    </p>
+                  </motion.div>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Game Info - Simplified */}
           <div className="space-y-4">
@@ -98,10 +223,12 @@ export const Settings: React.FC<SettingsProps> = ({ onClose }) => {
               href="https://github.com" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="flex items-center gap-3 text-zinc-600 hover:text-orange-500 transition-all text-[10px] font-black uppercase tracking-[0.3em]"
+              className="flex items-center gap-3 text-zinc-600 hover:text-red-500 transition-all text-[10px] font-black uppercase tracking-[0.3em]"
             >
-              <Github className="w-4 h-4" />
-              ACCESS SOURCE CODE
+              <button className="flex items-center gap-3">
+                <Github className="w-4 h-4" />
+                ACCESS SOURCE CODE
+              </button>
             </a>
           </div>
         </div>

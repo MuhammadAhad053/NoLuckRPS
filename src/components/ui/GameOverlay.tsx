@@ -70,7 +70,7 @@ export const GameOverlay: React.FC<GameOverlayProps> = ({
             <div className="w-px h-8 bg-white/10" />
             <div className="flex items-center gap-6">
               <div className="text-center">
-                <p className="text-orange-500 text-[8px] font-black uppercase tracking-widest mb-1">You</p>
+                <p className="text-red-500 text-[8px] font-black uppercase tracking-widest mb-1">You</p>
                 <p className="text-3xl font-black text-white">{playerScore}</p>
               </div>
               <p className="text-zinc-600 font-black italic text-xl">VS</p>
@@ -172,7 +172,7 @@ export const GameOverlay: React.FC<GameOverlayProps> = ({
                 transition={{ repeat: Infinity, duration: 4 }}
                 className={cn(
                   "absolute inset-0 blur-[100px] -z-10",
-                  matchResult === 'win' ? "bg-orange-500" : "bg-red-600"
+                  matchResult === 'win' ? "bg-red-500" : "bg-red-600"
                 )}
               />
 
@@ -183,7 +183,7 @@ export const GameOverlay: React.FC<GameOverlayProps> = ({
                   transition={{ delay: 0.2 }}
                   className={cn(
                     "px-6 py-2 rounded-sm border text-[10px] font-black uppercase tracking-[0.5em]",
-                    matchResult === 'win' ? "border-orange-500/30 text-orange-500 bg-orange-500/5" : "border-red-500/30 text-red-500 bg-red-500/5"
+                    matchResult === 'win' ? "border-red-500/30 text-red-500 bg-red-500/5" : "border-red-500/30 text-red-500 bg-red-500/5"
                   )}
                 >
                   Match Protocol Concluded
@@ -198,7 +198,7 @@ export const GameOverlay: React.FC<GameOverlayProps> = ({
                   )}
                 >
                   {matchResult === 'win' ? (
-                    <span className="text-transparent bg-clip-text bg-gradient-to-b from-white via-orange-500 to-orange-700">VICTORY</span>
+                    <span className="text-transparent bg-clip-text bg-gradient-to-b from-white via-red-500 to-red-700">VICTORY</span>
                   ) : (
                     <span className="text-transparent bg-clip-text bg-gradient-to-b from-white via-red-600 to-red-900">DEFEAT</span>
                   )}
@@ -228,7 +228,7 @@ export const GameOverlay: React.FC<GameOverlayProps> = ({
                   className={cn(
                     "pointer-events-auto w-full py-8 font-black tracking-[0.3em] uppercase text-lg rounded-sm transition-all",
                     matchResult === 'win' 
-                      ? "bg-orange-600 hover:bg-orange-500 text-white shadow-[0_0_30px_rgba(249,115,22,0.3)]" 
+                      ? "bg-red-600 hover:bg-red-500 text-white shadow-[0_0_30px_rgba(220,38,38,0.3)]" 
                       : "bg-zinc-900 hover:bg-zinc-800 text-white border border-white/10"
                   )}
                 >
@@ -247,7 +247,7 @@ export const GameOverlay: React.FC<GameOverlayProps> = ({
             >
               <h2 className={cn(
                 "text-[8rem] font-black italic uppercase tracking-tighter drop-shadow-[0_0_30px_rgba(0,0,0,0.8)] leading-none",
-                result === 'win' ? "text-orange-500" : 
+                result === 'win' ? "text-red-500" : 
                 result === 'loss' ? "text-red-600" : "text-zinc-400"
               )}>
                 {result === 'win' ? 'ROUND WIN' : result === 'loss' ? 'ROUND LOSS' : 'DRAW'}
@@ -280,7 +280,7 @@ export const GameOverlay: React.FC<GameOverlayProps> = ({
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-orange-500 font-black uppercase tracking-[0.5em] text-[10px] animate-pulse bg-orange-500/5 px-8 py-3 rounded-full border border-orange-500/20"
+              className="text-red-500 font-black uppercase tracking-[0.5em] text-[10px] animate-pulse bg-red-500/5 px-8 py-3 rounded-full border border-red-500/20"
             >
               Waiting for reveal...
             </motion.div>
@@ -297,17 +297,17 @@ const MoveButton = ({ move, onClick }: { move: Move; onClick: () => void }) => (
     whileHover={{ scale: 1.1, y: -15 }}
     whileTap={{ scale: 0.9 }}
     onClick={onClick}
-    className="group relative w-32 h-32 bg-zinc-950 border-2 border-white/5 rounded-[2rem] flex flex-col items-center justify-center gap-3 transition-all hover:border-orange-500/50 hover:bg-zinc-900 shadow-[0_0_30px_rgba(0,0,0,0.5)]"
+    className="group relative w-32 h-32 bg-zinc-950 border-2 border-white/5 rounded-[2rem] flex flex-col items-center justify-center gap-3 transition-all hover:border-red-500/50 hover:bg-zinc-900 shadow-[0_0_30px_rgba(0,0,0,0.5)]"
   >
-    <div className="text-zinc-500 group-hover:text-orange-500 transition-colors">
+    <div className="text-zinc-500 group-hover:text-red-500 transition-colors">
       {move === 'rock' ? <Hand className="w-12 h-12 rotate-[-45deg]" /> : 
        move === 'paper' ? <Hand className="w-12 h-12" /> : 
        <Scissors className="w-12 h-12 rotate-90" />}
     </div>
-    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-600 group-hover:text-orange-500 transition-colors">
+    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-600 group-hover:text-red-500 transition-colors">
       {move}
     </span>
-    <div className="absolute inset-0 rounded-[2rem] bg-orange-500/0 group-hover:bg-orange-500/5 transition-colors" />
+    <div className="absolute inset-0 rounded-[2rem] bg-red-500/0 group-hover:bg-red-500/5 transition-colors" />
   </motion.button>
 );
 

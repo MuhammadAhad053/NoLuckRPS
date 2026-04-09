@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { collection, query, where, getDocs, doc, setDoc, deleteDoc, onSnapshot, serverTimestamp, updateDoc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { UserProfile, Friend, FriendRequest, GameInvite } from '../types';
@@ -108,9 +108,9 @@ export function useSocial(profile: UserProfile | null) {
         if (change.type === 'added' || change.type === 'modified') {
           const data = change.doc.data() as GameInvite;
           if (data.status === 'accepted' && data.matchId) {
-            // Check if it's very recent (within last 30 seconds) to avoid auto-joining on refresh
+            // Check if it's very recent and happened after we started listening
             const timestamp = data.timestamp?.toMillis() || Date.now();
-            if (Date.now() - timestamp < 30000) {
+            if (timestamp > listenerStartTime.current - 5000) { // 5s buffer
               setAcceptedMatch({ matchId: data.matchId, inviteId: change.doc.id });
             }
           }
@@ -132,6 +132,7 @@ export function useSocial(profile: UserProfile | null) {
   }, [profile]);
 
   const [acceptedMatch, setAcceptedMatch] = useState<{ matchId: string, inviteId: string } | null>(null);
+  const listenerStartTime = useRef(Date.now());
 
   const clearAcceptedMatch = () => setAcceptedMatch(null);
 

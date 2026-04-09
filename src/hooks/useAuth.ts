@@ -34,7 +34,15 @@ export function useAuth() {
       try {
         if (firebaseUser) {
           const profileRef = doc(db, 'users', firebaseUser.uid);
-          const profileSnap = await getDoc(profileRef);
+          let profileSnap;
+          try {
+            profileSnap = await getDoc(profileRef);
+          } catch (error: any) {
+            console.error("Error fetching user profile:", error);
+            // If we can't fetch the profile, we should still stop loading
+            setLoading(false);
+            return;
+          }
           
           if (!profileSnap.exists()) {
             const baseUsername = (firebaseUser.displayName || 'Player').replace(/\s+/g, '');
@@ -152,7 +160,7 @@ export function useAuth() {
   };
 
   const updateUsername = async (newUsername: string) => {
-    if (!user || !profile) return { success: false, error: 'Not authenticated' };
+    if (!profile) return { success: false, error: 'Not authenticated' };
     
     const usernameLower = newUsername.toLowerCase();
     
@@ -161,11 +169,18 @@ export function useAuth() {
     const querySnapshot = await getDocs(q);
     
     // Filter out current user if they are the one with the username
-    const otherUsers = querySnapshot.docs.filter(d => d.id !== user.uid);
+    const otherUsers = querySnapshot.docs.filter(d => d.id !== profile.uid);
     
     if (otherUsers.length > 0) {
       return { success: false, error: 'Username already taken' };
     }
+
+    if (isGuest) {
+      setProfile(prev => prev ? { ...prev, username: newUsername, usernameLower, displayName: newUsername } : null);
+      return { success: true };
+    }
+
+    if (!user) return { success: false, error: 'Not authenticated' };
 
     try {
       await updateDoc(doc(db, 'users', user.uid), {
@@ -221,7 +236,12 @@ export function useAuth() {
   };
 
   const logoutUser = async () => {
-    if (user && !isGuest) {
+    if (isGuest) {
+      setIsGuest(false);
+      setProfile(null);
+      return;
+    }
+    if (user) {
       try {
         await updateDoc(doc(db, 'users', user.uid), { status: 'offline' });
       } catch (e) {}

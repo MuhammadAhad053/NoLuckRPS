@@ -19,6 +19,8 @@ interface MatchHistoryEntry {
   opponentScore: number;
   mode: string;
   timestamp: any;
+  previousElo?: number;
+  eloChange?: number;
 }
 
 export const MatchHistory: React.FC<MatchHistoryProps> = ({ profile, onClose }) => {
@@ -56,11 +58,8 @@ export const MatchHistory: React.FC<MatchHistoryProps> = ({ profile, onClose }) 
         {/* Header */}
         <div className="p-6 border-b border-white/10 flex items-center justify-between bg-zinc-900/50">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-orange-500/10 rounded-sm">
-              <History className="w-5 h-5 text-orange-500" />
-            </div>
             <div>
-              <h2 className="text-xl font-black italic tracking-tighter text-white uppercase">Match History</h2>
+              <h2 className="text-xl font-black tracking-tighter text-white uppercase not-italic">Match History</h2>
               <p className="text-[10px] text-zinc-500 font-bold tracking-widest uppercase">Recent Combat Logs</p>
             </div>
           </div>
@@ -76,7 +75,7 @@ export const MatchHistory: React.FC<MatchHistoryProps> = ({ profile, onClose }) 
         <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
           {loading ? (
             <div className="flex flex-col items-center justify-center py-20 gap-4">
-              <div className="w-12 h-12 border-2 border-orange-500/20 border-t-orange-500 rounded-full animate-spin" />
+              <div className="w-12 h-12 border-2 border-red-500/20 border-t-red-500 rounded-full animate-spin" />
               <p className="text-[10px] text-zinc-500 font-black tracking-[0.3em] uppercase">Retrieving Logs...</p>
             </div>
           ) : history.length === 0 ? (
@@ -90,19 +89,13 @@ export const MatchHistory: React.FC<MatchHistoryProps> = ({ profile, onClose }) 
                 key={match.id}
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
-                className={`p-4 rounded-sm border flex items-center justify-between transition-all hover:translate-x-1 ${
-                  match.result === 'win' 
-                    ? 'bg-green-500/5 border-green-500/20' 
-                    : match.result === 'loss'
-                    ? 'bg-red-500/5 border-red-500/20'
-                    : 'bg-zinc-500/5 border-zinc-500/20'
-                }`}
+                className={`p-4 rounded-sm border flex items-center justify-between transition-all hover:translate-x-1 bg-zinc-900/50 border-white/5`}
               >
                 <div className="flex items-center gap-4">
                   <div className={`w-10 h-10 rounded-sm flex items-center justify-center font-black italic text-lg ${
                     match.result === 'win' ? 'text-green-500 bg-green-500/10' : 
                     match.result === 'loss' ? 'text-red-500 bg-red-500/10' : 
-                    'text-zinc-500 bg-zinc-500/10'
+                    'text-zinc-400 bg-white/5'
                   }`}>
                     {match.result === 'win' ? 'W' : match.result === 'loss' ? 'L' : 'D'}
                   </div>
@@ -129,9 +122,16 @@ export const MatchHistory: React.FC<MatchHistoryProps> = ({ profile, onClose }) 
                 <div className={`text-xs font-black italic ${
                   match.result === 'win' ? 'text-green-500' : 
                   match.result === 'loss' ? 'text-red-500' : 
-                  'text-zinc-500'
+                  'text-zinc-400'
                 }`}>
-                  {match.result === 'win' ? '+25 ELO' : match.result === 'loss' ? '-15 ELO' : '+0 ELO'}
+                  {match.previousElo !== undefined ? (
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[10px] text-zinc-500 opacity-50">{match.previousElo}</span>
+                      <span className="text-[10px] text-zinc-400">{match.eloChange >= 0 ? '+' : ''}{match.eloChange}</span>
+                    </div>
+                  ) : (
+                    match.result === 'win' ? '+25 ELO' : match.result === 'loss' ? '-15 ELO' : '+0 ELO'
+                  )}
                 </div>
               </motion.div>
             ))

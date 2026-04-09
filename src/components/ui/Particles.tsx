@@ -35,7 +35,7 @@ export const Particles: React.FC = () => {
         this.speedX = (Math.random() - 0.5) * 1.5;
         this.speedY = (Math.random() - 0.5) * 1.5;
         
-        const colors = ['#ff4400', '#ff8800', '#ffcc00', '#ffffff', '#ef4444'];
+        const colors = ['#ff0000', '#dc2626', '#991b1b', '#ffffff', '#ef4444'];
         this.color = colors[Math.floor(Math.random() * colors.length)];
         this.opacity = Math.random() * 0.8 + 0.2;
         this.life = 0;
