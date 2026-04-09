@@ -2,19 +2,20 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
 import { initializeFirestore } from 'firebase/firestore';
 
-// Fallback to config file if environment variables are not set
-import firebaseConfigJson from '../firebase-applet-config.json';
-
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || firebaseConfigJson.apiKey,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || firebaseConfigJson.authDomain,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || firebaseConfigJson.projectId,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || firebaseConfigJson.storageBucket,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || firebaseConfigJson.messagingSenderId,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || firebaseConfigJson.appId,
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
-const databaseId = import.meta.env.VITE_FIREBASE_DATABASE_ID || firebaseConfigJson.firestoreDatabaseId || '(default)';
+const databaseId = import.meta.env.VITE_FIREBASE_DATABASE_ID || '(default)';
+
+if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
+  console.error("Firebase configuration is missing. Please set VITE_FIREBASE_* environment variables.");
+}
 
 console.log("Initializing Firebase with Project ID:", firebaseConfig.projectId);
 console.log("Using Firestore Database ID:", databaseId);
@@ -38,7 +39,7 @@ async function testConnection() {
     if (error.message && error.message.includes('client is offline')) {
       console.error("CRITICAL: Firestore client is offline. This usually means the Database ID is incorrect.");
       console.error("Current Database ID:", databaseId);
-      console.error("If this is not '(default)', try changing it to '(default)' in firebase-applet-config.json.");
+      console.error("Check your VITE_FIREBASE_DATABASE_ID environment variable.");
     } else {
       console.warn("Firestore connection test warning (expected if rules deny access):", error.message);
     }
