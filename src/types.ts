@@ -27,6 +27,8 @@ export interface UserProfile {
   botLosses: number;
   botDraws: number;
   createdAt: number;
+  winColor?: string;
+  lossColor?: string;
   isGuest?: boolean;
 }
 

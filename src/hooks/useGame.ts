@@ -598,14 +598,19 @@ export function useGame(profile: UserProfile | null) {
       const matchSnap = await getDoc(matchRef);
 
       if (!matchSnap.exists()) {
+        console.error(`Match not found for code: ${code}`);
         throw new Error('Invalid party code');
       }
 
       const matchData = matchSnap.data() as Match;
+      console.log('Found match data:', matchData);
+
       if (matchData.players.length >= 2) {
+        console.warn('Match is already full');
         throw new Error('Match is full');
       }
 
+      console.log('Attempting to join match as:', profile.uid);
       await updateDoc(matchRef, {
         players: [...matchData.players, profile.uid],
         [`scores.${profile.uid}`]: 0,

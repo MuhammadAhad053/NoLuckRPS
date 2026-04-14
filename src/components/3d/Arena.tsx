@@ -1,11 +1,21 @@
-import React, { useRef, useMemo } from 'react';
+import React, { useRef, useMemo, useEffect, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { MeshDistortMaterial, MeshWobbleMaterial, Float, Text, MeshReflectorMaterial, Stars, Sparkles, Environment } from '@react-three/drei';
+import { MeshDistortMaterial, Float, MeshReflectorMaterial, Stars, Sparkles } from '@react-three/drei';
 import * as THREE from 'three';
 
 export const Arena: React.FC = () => {
   const gridRef = useRef<THREE.GridHelper>(null);
   const platformRef = useRef<THREE.Group>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useFrame((state) => {
     if (gridRef.current) {
@@ -25,22 +35,30 @@ export const Arena: React.FC = () => {
       
       {/* Main Platform Group */}
       <group ref={platformRef} position={[0, -2.1, 0]}>
-        {/* Reflective Floor */}
+        {/* Reflective Floor - Simplified for mobile */}
         <mesh rotation={[-Math.PI / 2, 0, 0]}>
-          <circleGeometry args={[15, 64]} />
-          <MeshReflectorMaterial
-            blur={[300, 100]}
-            resolution={1024}
-            mixBlur={1}
-            mixStrength={60}
-            roughness={1}
-            depthScale={1.2}
-            minDepthThreshold={0.4}
-            maxDepthThreshold={1.4}
-            color="#050505"
-            metalness={0.8}
-            mirror={0.5}
-          />
+          <circleGeometry args={[15, isMobile ? 32 : 64]} />
+          {isMobile ? (
+            <meshStandardMaterial 
+              color="#050505" 
+              metalness={0.8} 
+              roughness={0.2} 
+            />
+          ) : (
+            <MeshReflectorMaterial
+              blur={[300, 100]}
+              resolution={512}
+              mixBlur={1}
+              mixStrength={60}
+              roughness={1}
+              depthScale={1.2}
+              minDepthThreshold={0.4}
+              maxDepthThreshold={1.4}
+              color="#050505"
+              metalness={0.8}
+              mirror={0.5}
+            />
+          )}
         </mesh>
 
         {/* Inner Neon Ring (Orange) */}

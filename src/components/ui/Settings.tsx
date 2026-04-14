@@ -5,7 +5,8 @@ import { Button } from './Button';
 import { useAudio } from '../../hooks/useAudio';
 import { UserProfile } from '../../types';
 import { db } from '../../firebase';
-import { collection, getDocs, writeBatch, doc, query, limit } from 'firebase/firestore';
+import { collection, getDocs, writeBatch, doc, query, limit, updateDoc } from 'firebase/firestore';
+import { cn } from '../../lib/utils';
 
 interface SettingsProps {
   profile: UserProfile | null;
@@ -79,6 +80,38 @@ export const Settings: React.FC<SettingsProps> = ({ profile, onClose }) => {
     }
   };
 
+  const [isUpdatingColors, setIsUpdatingColors] = useState(false);
+
+  const WIN_COLORS = [
+    { name: 'Cyber Red', value: 'text-red-500', bg: 'bg-red-500' },
+    { name: 'Neon Green', value: 'text-green-500', bg: 'bg-green-500' },
+    { name: 'Electric Blue', value: 'text-blue-500', bg: 'bg-blue-500' },
+    { name: 'Plasma Purple', value: 'text-purple-500', bg: 'bg-purple-500' },
+    { name: 'Gold Flare', value: 'text-yellow-500', bg: 'bg-yellow-500' },
+  ];
+
+  const LOSS_COLORS = [
+    { name: 'Blood Red', value: 'text-red-600', bg: 'bg-red-600' },
+    { name: 'Deep Orange', value: 'text-orange-600', bg: 'bg-orange-600' },
+    { name: 'Void Gray', value: 'text-zinc-600', bg: 'bg-zinc-600' },
+    { name: 'Toxic Lime', value: 'text-lime-600', bg: 'bg-lime-600' },
+    { name: 'Shadow Blue', value: 'text-blue-900', bg: 'bg-blue-900' },
+  ];
+
+  const updateColorPreference = async (type: 'win' | 'loss', color: string) => {
+    if (!profile || profile.isGuest) return;
+    setIsUpdatingColors(true);
+    try {
+      await updateDoc(doc(db, 'users', profile.uid), {
+        [type === 'win' ? 'winColor' : 'lossColor']: color
+      });
+    } catch (error) {
+      console.error('Failed to update color preference:', error);
+    } finally {
+      setIsUpdatingColors(false);
+    }
+  };
+
   return (
     <motion.div 
       initial={{ opacity: 0 }}
@@ -114,6 +147,59 @@ export const Settings: React.FC<SettingsProps> = ({ profile, onClose }) => {
         </div>
 
         <div className="p-6 md:p-10 space-y-8 md:space-y-10 overflow-y-auto custom-scrollbar">
+          {/* Visual Preferences */}
+          <div className="space-y-6">
+            <div className="flex items-center gap-3">
+              <div className="h-px flex-1 bg-white/5" />
+              <h3 className="text-[10px] font-black uppercase tracking-[0.5em] text-zinc-500">VISUAL PROTOCOLS</h3>
+              <div className="h-px flex-1 bg-white/5" />
+            </div>
+
+            {/* Win Color Selector */}
+            <div className="space-y-4">
+              <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">ROUND WIN INDICATOR</p>
+              <div className="flex flex-wrap gap-3">
+                {WIN_COLORS.map((color) => (
+                  <button
+                    key={color.value}
+                    onClick={() => updateColorPreference('win', color.value)}
+                    disabled={isUpdatingColors || profile?.isGuest}
+                    className={cn(
+                      "w-10 h-10 rounded-sm border-2 transition-all flex items-center justify-center",
+                      color.bg,
+                      profile?.winColor === color.value ? "border-white scale-110 shadow-[0_0_15px_rgba(255,255,255,0.3)]" : "border-transparent opacity-50 hover:opacity-100"
+                    )}
+                    title={color.name}
+                  >
+                    {profile?.winColor === color.value && <div className="w-2 h-2 bg-white rounded-full" />}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Loss Color Selector */}
+            <div className="space-y-4">
+              <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">ROUND LOSS INDICATOR</p>
+              <div className="flex flex-wrap gap-3">
+                {LOSS_COLORS.map((color) => (
+                  <button
+                    key={color.value}
+                    onClick={() => updateColorPreference('loss', color.value)}
+                    disabled={isUpdatingColors || profile?.isGuest}
+                    className={cn(
+                      "w-10 h-10 rounded-sm border-2 transition-all flex items-center justify-center",
+                      color.bg,
+                      profile?.lossColor === color.value ? "border-white scale-110 shadow-[0_0_15px_rgba(255,255,255,0.3)]" : "border-transparent opacity-50 hover:opacity-100"
+                    )}
+                    title={color.name}
+                  >
+                    {profile?.lossColor === color.value && <div className="w-2 h-2 bg-white rounded-full" />}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
           {/* Audio Settings */}
           <div className="space-y-6">
             <div className="flex items-center gap-3">

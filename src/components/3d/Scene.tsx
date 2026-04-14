@@ -14,9 +14,20 @@ interface SceneProps {
 }
 
 export const Scene: React.FC<SceneProps> = ({ playerMove, opponentMove, isRevealing, isMatchmaking }) => {
+  const [isMobile, setIsMobile] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   return (
     <div className="absolute inset-0 z-0 bg-[#050505]">
-      <Canvas shadows dpr={[1, 2]}>
+      <Canvas shadows dpr={isMobile ? [1, 1] : [1, 2]}>
         <PerspectiveCamera makeDefault position={[0, 2, 8]} fov={50} />
         
         {/* Lighting */}
@@ -50,15 +61,17 @@ export const Scene: React.FC<SceneProps> = ({ playerMove, opponentMove, isReveal
           <Environment preset="city" />
         </Suspense>
 
-        {/* Post-processing */}
-        <EffectComposer>
-          <Bloom 
-            luminanceThreshold={0.2} 
-            mipmapBlur 
-            intensity={2} 
-            radius={0.6} 
-          />
-        </EffectComposer>
+        {/* Post-processing - Only on Desktop */}
+        {!isMobile && (
+          <EffectComposer>
+            <Bloom 
+              luminanceThreshold={0.2} 
+              mipmapBlur 
+              intensity={2} 
+              radius={0.6} 
+            />
+          </EffectComposer>
+        )}
 
         {/* Controls (Disabled during game, enabled for menu/matchmaking) */}
         {isMatchmaking && <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.5} />}

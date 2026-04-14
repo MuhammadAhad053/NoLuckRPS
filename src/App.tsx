@@ -132,6 +132,7 @@ export default function App() {
               round={round}
               matchResult={matchResult}
               opponent={opponentProfile}
+              profile={profile}
             />
           </div>
         ) : (
@@ -172,6 +173,7 @@ export default function App() {
             sortBy={leaderboardSort}
             onSortChange={setLeaderboardSort}
             onClose={() => setShowLeaderboard(false)} 
+            profile={profile!}
           />
         )}
         {showHistory && profile && (

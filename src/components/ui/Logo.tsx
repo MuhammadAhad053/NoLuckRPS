@@ -95,37 +95,39 @@ export const Logo: React.FC<LogoProps> = ({ className = "", size = 200 }) => {
           strokeWidth="4"
         />
 
-        {/* Stylized 'RPS' Monogram */}
-        <g transform="translate(82, 75) scale(0.7)">
-          <motion.path
-            initial={{ pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: 1, opacity: 1 }}
-            transition={{ duration: 1, delay: 1 }}
-            d="M5 10 L45 10 L45 35 L5 35 L5 60"
-            stroke="#fff"
-            strokeWidth="8"
-            strokeLinecap="round"
-            fill="none"
-          />
-          <motion.path
-            initial={{ pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: 1, opacity: 1 }}
-            transition={{ duration: 1, delay: 1.2 }}
-            d="M25 10 L25 60"
-            stroke="#ef4444"
-            strokeWidth="4"
-            strokeLinecap="round"
-            fill="none"
-          />
-          <motion.path
-            initial={{ pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: 1, opacity: 1 }}
-            transition={{ duration: 1, delay: 1.4 }}
-            d="M5 60 L45 60"
-            stroke="#fff"
-            strokeWidth="8"
-            strokeLinecap="round"
-            fill="none"
+        {/* Clashing Swords */}
+        <g transform="translate(100, 100) scale(0.6)">
+          {/* Sword 1 */}
+          <motion.g
+            initial={{ x: -40, y: 40, rotate: -45, opacity: 0 }}
+            animate={{ x: -10, y: 10, rotate: -45, opacity: 1 }}
+            transition={{ duration: 0.8, delay: 1, type: "spring" }}
+          >
+            <rect x="-2" y="-40" width="4" height="50" fill="#fff" rx="2" />
+            <rect x="-8" y="10" width="16" height="4" fill="#ef4444" rx="2" />
+            <rect x="-3" y="14" width="6" height="12" fill="#991b1b" rx="2" />
+          </motion.g>
+          {/* Sword 2 */}
+          <motion.g
+            initial={{ x: 40, y: 40, rotate: 45, opacity: 0 }}
+            animate={{ x: 10, y: 10, rotate: 45, opacity: 1 }}
+            transition={{ duration: 0.8, delay: 1, type: "spring" }}
+          >
+            <rect x="-2" y="-40" width="4" height="50" fill="#fff" rx="2" />
+            <rect x="-8" y="10" width="16" height="4" fill="#ef4444" rx="2" />
+            <rect x="-3" y="14" width="6" height="12" fill="#991b1b" rx="2" />
+          </motion.g>
+          
+          {/* Clash Sparkle */}
+          <motion.circle
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: [0, 1.5, 0], opacity: [0, 1, 0] }}
+            transition={{ duration: 0.5, delay: 1.5, repeat: Infinity, repeatDelay: 2 }}
+            cx="0"
+            cy="0"
+            r="10"
+            fill="#fff"
+            style={{ filter: 'blur(4px)' }}
           />
         </g>
         

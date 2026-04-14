@@ -19,7 +19,21 @@ interface GameOverlayProps {
   round: number;
   matchResult: GameResult;
   opponent?: UserProfile | null;
+  profile: UserProfile;
 }
+
+const COLOR_MAP: Record<string, { glow: string; gradient: string; button: string }> = {
+  'text-red-500': { glow: 'bg-red-500', gradient: 'from-white via-red-500 to-red-700', button: 'bg-red-600 hover:bg-red-500 shadow-[0_0_30px_rgba(220,38,38,0.3)]' },
+  'text-green-500': { glow: 'bg-green-500', gradient: 'from-white via-green-500 to-green-700', button: 'bg-green-600 hover:bg-green-500 shadow-[0_0_30px_rgba(22,163,74,0.3)]' },
+  'text-blue-500': { glow: 'bg-blue-500', gradient: 'from-white via-blue-500 to-blue-700', button: 'bg-blue-600 hover:bg-blue-500 shadow-[0_0_30px_rgba(37,99,235,0.3)]' },
+  'text-purple-500': { glow: 'bg-purple-500', gradient: 'from-white via-purple-500 to-purple-700', button: 'bg-purple-600 hover:bg-purple-500 shadow-[0_0_30px_rgba(147,51,234,0.3)]' },
+  'text-yellow-500': { glow: 'bg-yellow-500', gradient: 'from-white via-yellow-500 to-yellow-700', button: 'bg-yellow-600 hover:bg-yellow-500 shadow-[0_0_30px_rgba(202,138,4,0.3)]' },
+  'text-red-600': { glow: 'bg-red-600', gradient: 'from-white via-red-600 to-red-900', button: 'bg-red-700 hover:bg-red-600 shadow-[0_0_30px_rgba(185,28,28,0.3)]' },
+  'text-orange-600': { glow: 'bg-orange-600', gradient: 'from-white via-orange-600 to-orange-900', button: 'bg-orange-700 hover:bg-orange-600 shadow-[0_0_30_rgba(194,65,12,0.3)]' },
+  'text-zinc-600': { glow: 'bg-zinc-600', gradient: 'from-white via-zinc-600 to-zinc-900', button: 'bg-zinc-700 hover:bg-zinc-600 shadow-[0_0_30px_rgba(82,82,82,0.3)]' },
+  'text-lime-600': { glow: 'bg-lime-600', gradient: 'from-white via-lime-600 to-zinc-900', button: 'bg-lime-700 hover:bg-lime-600 shadow-[0_0_30px_rgba(77,124,15,0.3)]' },
+  'text-blue-900': { glow: 'bg-blue-900', gradient: 'from-white via-blue-900 to-black', button: 'bg-blue-950 hover:bg-blue-900 shadow-[0_0_30px_rgba(30,58,138,0.3)]' },
+};
 
 export const GameOverlay: React.FC<GameOverlayProps> = ({ 
   countdown, 
@@ -34,9 +48,13 @@ export const GameOverlay: React.FC<GameOverlayProps> = ({
   opponentScore,
   round,
   matchResult,
-  opponent
+  opponent,
+  profile
 }) => {
   const [showExitConfirm, setShowExitConfirm] = React.useState(false);
+
+  const winVisuals = COLOR_MAP[profile.winColor || 'text-red-500'] || COLOR_MAP['text-red-500'];
+  const lossVisuals = COLOR_MAP[profile.lossColor || 'text-red-600'] || COLOR_MAP['text-red-600'];
 
   return (
     <div className="absolute inset-0 z-20 flex flex-col pointer-events-none font-orbitron">
@@ -161,29 +179,29 @@ export const GameOverlay: React.FC<GameOverlayProps> = ({
               key="match-result"
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="flex flex-col items-center gap-6 md:gap-10 bg-zinc-950/90 backdrop-blur-3xl p-8 md:p-20 rounded-sm border-2 border-white/5 shadow-[0_0_100px_rgba(0,0,0,0.8)] relative overflow-hidden w-full max-w-2xl mx-4"
+              className="flex flex-col items-center gap-4 md:gap-10 bg-zinc-950/90 backdrop-blur-3xl p-6 md:p-16 lg:p-20 rounded-sm border-2 border-white/5 shadow-[0_0_100px_rgba(0,0,0,0.8)] relative overflow-hidden w-[95%] max-w-4xl mx-auto"
             >
               {/* Animated Background Glow */}
               <motion.div 
                 animate={{ 
-                  scale: [1, 1.2, 1],
-                  opacity: [0.1, 0.2, 0.1]
+                   scale: [1, 1.2, 1],
+                   opacity: [0.1, 0.2, 0.1]
                 }}
                 transition={{ repeat: Infinity, duration: 4 }}
                 className={cn(
                   "absolute inset-0 blur-[100px] -z-10",
-                  matchResult === 'win' ? "bg-red-500" : "bg-red-600"
+                  matchResult === 'win' ? winVisuals.glow : lossVisuals.glow
                 )}
               />
 
-              <div className="flex flex-col items-center gap-3 md:gap-4">
+              <div className="flex flex-col items-center gap-2 md:gap-4">
                 <motion.div
                   initial={{ y: -20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.2 }}
                   className={cn(
-                    "px-4 md:px-6 py-1 md:py-2 rounded-sm border text-[8px] md:text-[10px] font-black uppercase tracking-[0.3em] md:tracking-[0.5em]",
-                    matchResult === 'win' ? "border-red-500/30 text-red-500 bg-red-500/5" : "border-red-500/30 text-red-500 bg-red-500/5"
+                    "px-3 md:px-6 py-1 md:py-2 rounded-sm border text-[6px] md:text-[10px] font-black uppercase tracking-[0.2em] md:tracking-[0.5em]",
+                    matchResult === 'win' ? (profile.winColor || "text-red-500") : (profile.lossColor || "text-red-600")
                   )}
                 >
                   Match Protocol Concluded
@@ -193,42 +211,42 @@ export const GameOverlay: React.FC<GameOverlayProps> = ({
                   animate={{ scale: [1, 1.02, 1] }}
                   transition={{ repeat: Infinity, duration: 2 }}
                   className={cn(
-                    "text-5xl md:text-[12rem] font-black italic uppercase tracking-tighter leading-none drop-shadow-2xl",
-                    matchResult === 'win' ? "text-white" : "text-white"
+                    "text-4xl md:text-8xl lg:text-[10rem] font-black italic uppercase tracking-tighter leading-none drop-shadow-2xl",
+                    "text-white"
                   )}
                 >
                   {matchResult === 'win' ? (
-                    <span className="text-transparent bg-clip-text bg-gradient-to-b from-white via-red-500 to-red-700">VICTORY</span>
+                    <span className={cn("text-transparent bg-clip-text bg-gradient-to-b", winVisuals.gradient)}>VICTORY</span>
                   ) : (
-                    <span className="text-transparent bg-clip-text bg-gradient-to-b from-white via-red-600 to-red-900">DEFEAT</span>
+                    <span className={cn("text-transparent bg-clip-text bg-gradient-to-b", lossVisuals.gradient)}>DEFEAT</span>
                   )}
                 </motion.h2>
               </div>
 
-              <div className="grid grid-cols-3 gap-4 md:gap-12 w-full items-center">
-                <div className="text-center space-y-1 md:space-y-2">
-                  <p className="text-zinc-500 text-[8px] md:text-[10px] font-black uppercase tracking-widest">Your Score</p>
-                  <p className="text-3xl md:text-6xl font-black text-white italic">{playerScore}</p>
+              <div className="grid grid-cols-3 gap-2 md:gap-12 w-full items-center">
+                <div className="text-center space-y-0.5 md:space-y-2">
+                  <p className="text-zinc-500 text-[6px] md:text-[10px] font-black uppercase tracking-widest">Your Score</p>
+                  <p className="text-2xl md:text-6xl font-black text-white italic">{playerScore}</p>
                 </div>
                 <div className="flex flex-col items-center">
-                  <div className="h-px w-full bg-white/10 mb-2 md:mb-4" />
-                  <p className="text-zinc-600 font-black italic text-sm md:text-2xl">FINAL</p>
-                  <div className="h-px w-full bg-white/10 mt-2 md:mt-4" />
+                  <div className="h-px w-full bg-white/10 mb-1 md:mb-4" />
+                  <p className="text-zinc-600 font-black italic text-[10px] md:text-2xl">FINAL</p>
+                  <div className="h-px w-full bg-white/10 mt-1 md:mt-4" />
                 </div>
-                <div className="text-center space-y-1 md:space-y-2">
-                  <p className="text-zinc-500 text-[8px] md:text-[10px] font-black uppercase tracking-widest">Opponent</p>
-                  <p className="text-3xl md:text-6xl font-black text-white italic">{opponentScore}</p>
+                <div className="text-center space-y-0.5 md:space-y-2">
+                  <p className="text-zinc-500 text-[6px] md:text-[10px] font-black uppercase tracking-widest">Opponent</p>
+                  <p className="text-2xl md:text-6xl font-black text-white italic">{opponentScore}</p>
                 </div>
               </div>
 
-              <div className="flex flex-col gap-4 w-full">
+              <div className="flex flex-col gap-3 w-full">
                 <Button 
                   onClick={onExit}
                   size="xl" 
                   className={cn(
-                    "pointer-events-auto w-full py-6 md:py-8 font-black tracking-[0.2em] md:tracking-[0.3em] uppercase text-sm md:text-lg rounded-sm transition-all",
+                    "pointer-events-auto w-full py-4 md:py-8 font-black tracking-[0.1em] md:tracking-[0.3em] uppercase text-xs md:text-lg rounded-sm transition-all",
                     matchResult === 'win' 
-                      ? "bg-red-600 hover:bg-red-500 text-white shadow-[0_0_30px_rgba(220,38,38,0.3)]" 
+                      ? winVisuals.button 
                       : "bg-zinc-900 hover:bg-zinc-800 text-white border border-white/10"
                   )}
                 >
@@ -247,8 +265,8 @@ export const GameOverlay: React.FC<GameOverlayProps> = ({
             >
               <h2 className={cn(
                 "text-4xl md:text-[8rem] font-black italic uppercase tracking-tighter drop-shadow-[0_0_30px_rgba(0,0,0,0.8)] leading-none",
-                result === 'win' ? "text-red-500" : 
-                result === 'loss' ? "text-red-600" : "text-zinc-400"
+                result === 'win' ? (profile.winColor || "text-red-500") : 
+                result === 'loss' ? (profile.lossColor || "text-red-600") : "text-zinc-400"
               )}>
                 {result === 'win' ? 'ROUND WIN' : result === 'loss' ? 'ROUND LOSS' : 'DRAW'}
               </h2>
